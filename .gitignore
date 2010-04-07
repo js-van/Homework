@@ -8,3 +8,7 @@
 *.log
 *.swp
 *.o
+*.tiff
+*.gz
+*.tar
+
