@@ -1,0 +1,75 @@
+structure SchemeAST = SchAST;
+%%
+
+%eop EOF
+%pos int
+ 
+%term EOF | LPAREN | RPAREN | DEFINE | IF | CALL | QUOTE
+      | ID of string | NUM of int | NIL | TRUE | FALSE | DOT
+      | PLUS of string | MINUS of string | EQL of string | TIMES of string | DIV of string | MOD of string
+      | CONS of string | CAR of string | CDR of string | NULL of string 
+%nonterm START of SchemeAST.program | PROG of SchemeAST.program
+      | EQN of string * (string list * SchemeAST.expr) | EQNLIST of (string list) * ((string list * SchemeAST.expr) list)
+      | EXP of SchemeAST.expr | EXPLIST of SchemeAST.expr list 
+      | CONST of SchemeAST.constant | QUOTABLE of SchemeAST.constant | QUOTABLELIST of SchemeAST.constant list
+      | OP of string | VARLIST of string list 
+
+%nonassoc LPAREN  RPAREN  QUOTE ID NUM NIL
+%nonassoc  PLUS MINUS EQL TIMES CONS CAR CDR NULL
+%left DEFINE IF CALL
+
+%name Scheme
+
+%noshift EOF
+%verbose
+
+%%
+
+START : PROG                (PROG)
+
+PROG : LPAREN EQNLIST RPAREN    (EQNLIST)
+
+EQN : LPAREN DEFINE LPAREN ID RPAREN EXP RPAREN (ID, (nil,EXP)) 
+    | LPAREN DEFINE LPAREN ID VARLIST RPAREN EXP RPAREN (ID,(VARLIST,EXP))
+    
+EQNLIST : EQN              (let val (fname,body) = EQN in (fname::nil,body::nil) end)
+        | EQN EQNLIST      (let val (flist,blist) = EQNLIST; val (fname,body) = EQN in (fname::flist,body::blist) end)
+
+EXP : CONST                            (SchemeAST.Const(CONST))
+    | ID                               (SchemeAST.Variable(ID))
+    | LPAREN IF EXP EXP EXP RPAREN     (SchemeAST.If(EXP1,EXP2,EXP3))
+    | LPAREN CALL ID EXPLIST RPAREN    (SchemeAST.Call(ID,EXPLIST))
+    | LPAREN OP EXPLIST RPAREN         (SchemeAST.Op(OP,EXPLIST))
+
+EXPLIST : EXP              (EXP::nil)
+        | EXP EXPLIST      (EXP::EXPLIST)
+
+CONST : NUM                           (SchemeAST.Numeral NUM)
+      | TRUE                          (SchemeAST.Boolean true)
+      | FALSE                         (SchemeAST.Boolean false)
+      | NIL                           (SchemeAST.NIL)
+      | LPAREN QUOTE QUOTABLE RPAREN  (SchemeAST.Quote(QUOTABLE))
+
+QUOTABLE : CONST  (CONST)
+	 | ID     (SchAST.Symbol ID)
+	 | OP     (SchAST.Symbol OP)
+	 | IF     (SchAST.Symbol "if")
+	 | CALL   (SchAST.Symbol "call")
+	 | LPAREN QUOTABLELIST RPAREN (List.foldr SchemeAST.List SchemeAST.NIL QUOTABLELIST)
+
+VARLIST : ID              (ID::nil)
+        | ID VARLIST      (ID::VARLIST)
+
+QUOTABLELIST : QUOTABLE              (QUOTABLE::nil)
+	     | QUOTABLE QUOTABLELIST (QUOTABLE::QUOTABLELIST)
+
+OP : PLUS                  (PLUS)
+   | MINUS                 (MINUS)
+   | EQL                   (EQL)
+   | TIMES                 (TIMES)
+   | DIV                   (DIV)
+   | MOD                   (MOD)
+   | CONS                  (CONS)
+   | CAR                   (CAR)
+   | CDR                   (CDR)
+   | NULL                  (NULL)

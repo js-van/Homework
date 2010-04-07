@@ -1,0 +1,134 @@
+\documentclass{article}
+\usepackage{amsmath,amsfonts}
+
+%1,2,5,6,7,9,13
+
+
+\begin{document}
+
+\paragraph{3.1}
+
+\subparagraph{a}
+\emph{Want to show:} Any conic in $A^2$ is ismorphic to either $A^1$ or $A^1 - \{ 0 \}$.
+
+By exercise 1.1c, we know that the coordinate ring of any conic in $A^2$ is isomorphic to $A / \langle x^2 - y \rangle$ or $A / \langle x y  - 1 \rangle$; and thus each conic must be isomorphic to one of these two varieties.  We now treat each case:
+
+1.
+\[ A^1 \cong Y = Z ( \langle x^2 - y \rangle ) \]
+Consider the map $\varphi : A^1 \to Y$ which takes $t \mapsto (t,t^2)$.  Clearly the map is bijective and bicontinuous, and moreover regular.  Therefore by theorem 3.6 it is an isomorphism of $A^1$ and $Y$.
+
+2.
+\[ X = A^1 \setminus \{ 0 \} \cong Y' = Z( \langle x y - 1 \rangle ) \]
+Create the invertible bicontinuous map $\varphi : X \to Y'$ mapping $t \mapsto (t, \frac{1}{t})$ which is regular when $t \neq 0$.  As a result, these two spaces are isomorphic by theorem 3.6.
+
+Therefore all conics in $A^2$ are isomorphic to either $A^1$ or $A^1 \setminus \{ 0 \}$. $\Box$
+
+\subparagraph{b}
+\emph{Want to show:} $A^1$ is not isomorphic to any proper open subset of itself.
+
+Take any open set $X \subset A^1$, where $X$ is the complement of some variety cut out by a single polynomial, $f$.  Now look at the units of $\mathcal{O}(X)$; clearly there are the constant polynomials, but moreover for each zero $p$ of $f$, there also exists the family of units formed by $1 / (x - p)^k$, $(x - p)^k$.  These latter units are not present in $\mathcal{O}(A^1) \cong k[x]$.  As a result, we conclude that $\mathcal{O}(A^1) \not \cong \mathcal{O}(X)$ and so $A^1 \not \cong X$.  $\Box$
+
+
+\subparagraph{c}
+\emph{Want to Show:} Any conic in $P^2$ is isomorphic to $P^1$
+
+If $Y$ is a conic in $P^2$, then $Y$ must be a locus of the form:
+\[ a x^2 + b y^2 + c z^2 + 2d xy + 2e yz + 2f zx = 0\]
+We may rewrite this as a matrix equation of the form, :
+\[ v^T M v = 0 \]
+Where:
+\[ M = \left( \begin{array}{ccc}
+a & d & e \\
+d & b & f \\
+e & f & c \end{array} \right) \]
+and
+\[ v = ( x y z ) \]
+Since $M$ is symmetric, the spectral theorem states that $M$ has a factorization into $U \Lambda U^*$ where $\Lambda$ is a real diagonal matrix and $U$ is orthonormal.  Moreover, since the equation is a non-degenerate conic, the entries in $\Lambda$ must be non-zero.  Substituting and regrouping terms, we get:
+\[ v^T U^T \Lambda U v = 0 \]
+Since $U$ is orthonormal, we may again substitute $\sqrt{\Lambda} U v \mapsto w$.  Thus it is enough to find an isomorphism from $P^1$ onto the variety determined by
+\[ y^2 - xz = 0 \]
+But this is just the $d$-uple embedding given by $(s,t) \mapsto (s^2, st, t^2)$ which by problem 3.4 is an isomorphism. $\Box$.
+
+\subparagraph{d}
+\emph{Want to Show:} $A^2$ is not homeomorphic to $P^2$
+
+$P^2$ is homeomorphic to $A^2 \dot{\cup} A^1 \dot{\cup} A^0$.  For $A^2$ to be homeomorphic to $P^2$, $A^1$ would have to be empty.  But this is not the case.  Therefore $A^2$ and $P^2$ are topologically distinct. $\Box$
+
+\subparagraph{e}
+\emph{Want to Show:} If an affine variety, $X$, is isomorphic to a projective variety, $Y$, then it is a point.
+
+According to theorem 3.4, for any projective variety $\mathcal{O}(Y) = k$.  For an affine variety, $\mathcal{O}(X) = A(X)$.  However $A(X) = k \implies X$ is a point.  Therefore, if a projective variety is isomorphic to an affine variety it must be a point. $\Box$
+
+\paragraph{3.2}
+
+\subparagraph{a} Let $\varphi : A^1 \to A^2$ be defined by $t \mapsto (t^2, t^3)$.  
+
+\emph{WtS:} $\varphi$ defines a bijective bicontinuous map of $A^1$ onto the curve $y^2 = x^3$ but is not an isomorphism.
+
+That $\varphi$ is bijective can be verified by the fact that there exists a map $\varphi^{-1} : A^2 \to A^1$ taking $(x,y) \mapsto \sqrt(x)$ for all $y \geq 0$.  Over the curve $Y = \{ (x,y) | y^2 = x^3 \}$, we have $\varphi \circ \varphi^{-1} = id_{Y}$ and likewise $\varphi^{-1} \circ \varphi = id_{A^1}$.  
+
+It is obvious that algebraic sets in $Y$ map to algebraic sets in $A^1$ since $\varphi$ is polynomial.  Moreover, any algebraic set $Z = \{ t | f(t) = 0 \} \subseteq A^1$ maps to a corresponding algebraic set $Z' = \{ (x,y) \in Y | f(\varphi^{-1}(x,y)) = 0 \}$ (because $(x,y) \in Y \implies (x^2, y^3) \in Y$) and the corresponding algebraic sets in both varieties are just discrete points.  Therefore, the map is bicontinuous.
+
+However, $\varphi$ is not a morphism.  To verify this, consider the class of functions on the open set $U = Y \setminus \{ (4, \pm 8) \}$.  This maps under $\varphi^{-1}$ to the open set $A^1 \setminus \{ \pm 2 \}$.  Take the regular function $(y - 8)$ which is well defined $U$ and hence in $\mathcal{O}(Y)$.  However the inverse image of this map is $(t^3 - 8)$ which has zeros for the points $t = \pm 2 (-1)^{1/3}$ and is hence not regular on the image of $U$.  Therefore the map is not an isomorphism. $\Box$
+
+\subparagraph{b} Let the basefield $k$ have charateristic $p > 0$, and define $\varphi : A^1 \to A^1$ where $t \mapsto t^p$.
+
+\emph{WtS:} $\varphi$ is bicontinuous and bijective, but not an isomorphism.
+
+That $\varphi$ is bicontinuous follows from the property that $(a + b)^p = a^p + b^p$ for all $a,b \in k$ by the Frobenius property, and thus it maps algebraic sets to algebraic sets.
+
+
+\paragraph{3.5}
+
+We first must show that the $d$-uple embedding of a degree $d$ hypersurface, $H \subset P^n$ becomes a hyperplane in $P^N$.  To do this, observe that $H$ is cut out by a homogeneous polynomial of degree $d$ and since $H$ is a hypersurface $I(H)$ is generated by one element of the form:
+\[ \sum \limits_{d_0 + d_1 + ... d_n = d} c_{d_0 d_1 ... d_n} y_0^{d_0} y_1^{d_1} ... y_n^{d_n} \]
+The $d$-uple embedding of this function trivially maps each coefficient to a single dimension in $P^N$ giving the variety cut out by the set of ${ n + d \choose n }$ equations of the form:
+\[ c_{d_0 d_1... d_n } = y'_{d_0 d_1 ... d_n} \]
+This is a linear variety, and as such forms a hyperplane in $P^N$.  Moreover, $P^N \setminus \rho_d H$ must be affine as projective space minus a hyperplane is affine. Since the image of $H$ is completely contained in the image of $P^n$ $\rho P^n \setminus \rho H$ is also affine.  By 3.4, we know the d-uple embedding is an isomorphism and so we conclude that $P^n \setminus H$ is affine. $\Box$
+
+\paragraph{3.6}
+
+\emph{WtS:} The quasi-affine variety $X = A^2 - \{(0,0)\}$ is not affine.
+
+First, note that $\mathcal{O}(X) \cong k[x,y]$, since all polynomials in $k[x,y]$ are non-zero on 1-dimensional subsets of $A^2$ and thus can not take on 0 values at only the origin.  If $X$ was affine, then by theorem 3.2 $A(X) \cong \mathcal{O}(X) \cong k[x,y] \cong A(A^2)$.  But clearly $X \subset A^2$ and so $X \neq A^2$.  However this contradicts theorem 3.7.  Thus $X$ is not affine. $\Box$
+
+
+\paragraph{3.7}
+
+\subparagraph{a} 
+\emph{WtS:} Any two curves in $P^2$ have a nonempty intersection.
+
+See part b.
+
+\subparagraph{b}
+\emph{WTS:} If $Y \subseteq P^n$ is a projective variety with $\textrm{dim } Y \geq 1$, then for all hypersurfaces $H \subseteq P^n$, $Y \cap H \neq \emptyset$.
+
+Suppose $Y \cap H \neq \emptyset$.  Then $Y \setminus H = Y$ and $Y \subseteq P^n \setminus H$.  But $P^n \setminus H$ is affine (by problem 3.5) and therefore $Y$ is an intersection of an algebraic set and an affine variety, $Y$ must also be affine.  But by assumption $Y$ is also projective and so by problem 3.1e, $Y$ must be a point.  This is a contradiction if $\textrm{dim } Y > 1$. $\Box$
+
+\paragraph{3.9}
+
+Let $X = P^1$ and $Y$ be the 2-uple embedding of $P^1$ in $P^2$; clearly $X \cong Y$.
+
+\emph{WTS:} $S(X) \not \cong S(Y)$.
+
+First, $S(X)$ is trivial, it is just the graded ring $S^1$.  For $Y$, we know from problem 3.1c that $I(Y) \cong \langle y^2 - xz \rangle$ and so $S(Y) = S / I(Y)$.  But look at the units of $S(Y)$, in addition to the usual units which are of the form $c x_i^n$, there exist units such as $xz$, where $xz * xz = xz^2 \equiv_{I(Y)} -y^4$.  As a result, the units of $S(Y)$ are strictly larger than those of $S(X)$ and so the two rings are non-isomorphic. $\Box$
+
+\paragraph{3.13}
+
+Let $Y \subseteq X$ be varieties (with $Y$ a subvariety of $X$).
+
+\emph{WTS:} $\mathcal{O}_{Y,X}$ is a local ring with residue field $K(Y)$ and dimension $\textrm{dim }X - \textrm{dim }Y$.
+
+That $\mathcal{O}_{Y,X}$ is a ring is obvious.  Now consider the set of regular functions, $P \subset \mathcal{O}_{Y,X}$ which are zero when restricted to $Y$.  This collection of functions forms an ideal in $\mathcal{O}_{Y,X}$ (obviously, since it is closed under addition and multiplication by another element of $\mathcal{O}_{Y,X}$).  Moreover it is maximal, as the addition of any function which is non-zero on some subset of $Y$ will be non-zero on an open subset of $Y$ and thus by remark 3.1.1 it must extend the ideal $P$ to include all functions in $\mathcal{O}_{Y,X}$.  We also argue that $P$ is the only maximal ideal in $\mathcal{O}_{Y,X}$; as all open sets in $\mathcal{O}_{Y,X}$ must intersect $Y$ and thus the density argument (remark 3.1.1 again) implies that the ideal $P$ should be included in all other ideals.  Therefore, $\mathcal{O}_{Y,X}$ contains a unique maximal ideal and thus is a local ring.
+
+To show that the residue field $\mathcal{O}_{Y,X} / P = K(Y)$, we simply observe that the functions which are non-zero on $Y$ form a field when restricted to $Y$ and thus by the density argument are all included in $\mathcal{O}_{Y,X}$ again.
+
+Finally, we wish to prove that:
+\[ \textrm{dim } K(Y) + \textrm{dim } Y = \textrm{dim } X \]
+From 1.8A, we know that:
+\[ \textrm{height } P + \textrm{dim }\mathcal{O}_{Y,X}/P = \textrm{dim }\mathcal{O}_{Y,X} \]
+But as we have shown, $\mathcal{O}_{Y,X}/P = K(Y)$ and as $P$ is the space of zero-valued functions on $Y$, it must be that $\textrm{height } P = \textrm{dim } Y$.  Finally, $\textrm{dim }O_{Y,X} = \textrm{dim } X$, since the localization of $O(X)$ does not change the transcendence degree of the fractions over the base field.  Therefore:
+\[ \textrm{dim } Y + \textrm{dim } K(Y) = \textrm{dim } X \]
+$\Box$
+
+\end{document}

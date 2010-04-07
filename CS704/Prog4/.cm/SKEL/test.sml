@@ -1,0 +1,2 @@
+Skeleton 5
+d5Cf6d"Int"Cd"Option"d"SchAST"d"TextIO"d"SchUtil"d"LamAST"Naä¢SchemeLrVals"jh1aä¢Token"gp2ä¢LrParser"ÿgp1e"SchemeLrValsFun"aä¢SchemeLex"jh1aä¢Tokens"gp2ÿ<ÿ‚gp1e"SchemeLexFun"ad"SchemeParser"jh3aä¢ParserData"gp2ÿ<ÿƒad"Lex"gp1ÿ>aÿgp1ÿgp1e"Join"ad"SchTest"jh0gp1c"SCHTEST"N

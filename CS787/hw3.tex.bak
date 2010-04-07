@@ -1,0 +1,131 @@
+\documentclass{article}
+
+\usepackage{clrscode}
+\usepackage{amsmath}
+
+\title{CS787 Homework 3}
+\author{Mikola Lysenko}
+
+\begin{document}
+
+\maketitle{}
+
+\paragraph{} \textbf{1.}
+We start by giving the following procedure for incrementing an arbitrary sized binary counter, $C$, in place:
+
+\begin{codebox}
+\Procname{$\proc{Increment-Counter}( C )$}
+\li $i \gets 1$
+\li \While{$C_i = 1$}
+\li		\Do $C_i \gets 0$
+\li			$i \gets i + 1$
+		\End
+\li $C_i \gets 0$
+\end{codebox}
+
+Observe that adding one to the counter increases the total number of 1's by at most one and that each carry removes exactly one '1' from the counter, so the total number of carries performed must be bounded by the total number of increments.  Next, we fix the constant cost $a$ for executing a carry and the cost $b$ for executing the rest of the procedure.  Therefore, a charge of $a + b$ per call to $\proc{Increment-Counter}$ is sufficient to amortize cost over $O(n)$ iterations.
+
+\paragraph{} \textbf{2.}
+From class we know that for any subtree of a Fibonacci heap rooted at $v$, $size(v)$ is exponential in $rank(v)$, where $rank(v)$ is the degree at $v$ and $size(v)$ is the size of the tree.  More formally, $size(v) \in \Theta(2^{rank(v)})$.  By elementary arithmetic, this implies that $rank(v) \in \Theta(\log{size(v)})$.  By definition $rank(v) \in \Theta(height(v))$, so $height(v) \in \Theta(\log{size(v)})$ for all subtrees, and thus height of the entire Fibonacci heap can never be greater than the log of the total number of elements.
+
+\paragraph{} \textbf{3.}
+Here is a version of Dijkstra's SSP algorithm using a Fibonacci heap:
+
+\begin{codebox}
+\Procname{$\proc{Dijkstra-Path}(G, w, s)$}
+\li $H \gets \proc{Create-Fibonacci-Heap}( \langle 0, s \rangle )$
+\li $Pred[...] \gets \textrm{UNREACHABLE}$
+\li $Cost[...] \gets \infty$
+\li \While{$H$ is not empty}
+\li		\Do	$\langle c, v \rangle \gets \proc{Extract-Min}(H)$
+\li		\For \kw{each} $\langle n, e \rangle \in Adj(v)$ \kw{and} $c + w(e) < Cost[n]$
+\li			\Do $Cost[n] \gets c + w(e)$
+\li				\If{$Pred[n] = \textrm{UNREACHABLE}$} 
+\li					\Then $\proc{Insert}(H, \langle Cost[n], n \rangle)$
+\li				\Else	$\proc{Decrease-Key}(H, \langle Cost[n], n \rangle)$
+				\End
+\li				$Pred[n] \gets e$
+			\End
+		\End
+\li \Return $Pred[...]$
+\end{codebox}
+
+Where $G = (V,E)$ is some graph, $w : E \rightarrow \Re^+$ is some weight function on the edges with $O(1)$ time complexity, $s \in V$ is the source and we return a set of indexed directed edges pointing toward each vertex (which is sufficient to reconstruct any path given a destination.)  Now we make the following observations:
+
+\begin{itemize}
+\item{i} $\proc{Extract-Min}$ is called no more than $O(|V|)$ times.
+\item{ii} $\proc{Insert}$ and $\proc{Decrease-Key}$ are called no more than $O(|E|)$ times.
+\item{iii} The size of the heap is at most $O(|V|)$.
+\item{iv} The cost of the remainder of the procedure is bounded by the cost of calling the above 3 functions.
+\end{itemize}
+
+From class we have proven that the cost of both $\proc{Insert}$ and $\proc{Decrease-Key}$ are $O(1)$ for a Fibonacci heap, so the cost of the second item is bounded by $O(|E|)$.  We also showed that the cost of $\proc{Extract-Min}$ is bounded by $O(\log{n})$, with $n$ being the size of the heap which is in $O(|V|)$ in this case.  Therefore, the amortized cost of this algorithm is within $O(|E| + |V| \log{|V|})$.
+
+\paragraph{} \textbf{4.}
+Pick a graph $G = (V,E)$ and weight function $w : E \rightarrow \Re^+$.  Here is a version of Prim's algorithm using the Fibonacci heap:
+
+\begin{codebox}
+\Procname{$\proc{Prim-MST}(G, w)$}
+\li $Pred[...] \gets \kw{null}$
+\li $Cost[...] \gets \infty$
+\li $Visited \gets \emptyset$
+\li	$T \gets \emptyset$
+\li \While{$|Visited| < |V|$}
+\li		\Do $r \gets $ random vertex in $V - Visited$
+\li		$Cost[v] \gets 0$
+\li		$H \gets \proc{Create-Fibonacci-Heap}(\langle Cost[v], v \rangle)$
+\li		\While{$H$ is not empty}
+\li			\Do $\langle c, v \rangle \gets \proc{Extract-Min}(H)$
+\li			\If{$v \in Visited$} \kw{continue}
+\li			$Visited \gets Visited \cup \{ v \}$
+\li			\If{$Pred[n] \neq \kw{null}$} $T \gets T \cup \{ \langle Pred[v], v \rangle \}$
+\li			\For \kw{each} $\langle n, e \rangle \in Adj(v)$ \kw{and} $w(e) < Cost[n]$ \kw{and} $n \not \in Visited$
+\li				\Do \If{$Pred[n] = \kw{null}$} 
+\li					\Then $\proc{Insert}(H, \langle w(e), n \rangle)$
+\li					\Else $\proc{Decrease-Key}(H, \langle w(e), n \rangle)$
+					\End
+\li				$Pred[n] \gets v$
+\li				$Cost[n] \gets w(e)$
+				\End
+			\End
+		\End
+\li \Return $T$
+\end{codebox}
+
+As we have laboriously shown in class, the set of partial Minimum Spanning Trees forms a matroid.  Notice that the edge added to $T$ in line 13 does not violate the MST property for $T$ and is minimum cost.  Because the procedure is executed for each vertex, the final tree is also maximal.  Therefore, the above algorithm returns a minimum cost spanning tree.
+
+We start by analyzing the inner loop which computes the MST for some connected component of $C = (V',E') \subseteq G$.  By an argument analagous to the one used for Dijkstra's algorithm, we know that the cost of executing this loop is at most $O( |E'| + |V'| \log{|V'|} )$.  To compute the total cost, we now consider the sum over all connected components, $C_1, C_2, ... C_n \subseteq G$:
+\[ T(G) \leq a ( |E_1| + ... + |E_n| ) + b( |V_1| \log{|V_1|} + ... + |V_n| \log{|V_n|})\]
+With $a,b$ arbitrary constants.  Because the sets $C_1, ... C_n$ partition $v$ and are non-empty, we have the following relations:
+\begin{eqnarray*}
+|E_1| + ... + |E_n| & \leq & |E| \\
+|V_1| + ... + |V_n| & \leq & |V| \\
+\log{|V_i|} & \leq & \log{|V|}
+\end{eqnarray*}
+Substituting these into the previous equation gives a total time complexity in $O(|E| + |V| \log{|V|})$.
+
+\paragraph{} \textbf{5.}
+Let $A,B$ be boolean matrices and let $M$ be a square matrix such that:
+\[
+M = 
+\begin{pmatrix}
+I & A & 0 \\
+0 & I & B \\
+0 & 0 & I
+\end{pmatrix} \]
+By elementary boolean algebra it is easy to verify that the following identities hold:
+\begin{eqnarray*}
+M^2 & = & \begin{pmatrix}
+I & A & AB \\
+0 & I & B \\
+0 & 0 & I
+\end{pmatrix} \\
+M * M^2 & = & M^2 \\
+M^2 + M + I & = & M^2 \\
+M^2 + M^2 & = & M^2
+\end{eqnarray*}
+Note that $M$ defines a reflexive binary relation.  Let $M^*$ denote the transitive closure of $M$.  By definition:
+\[ M^* = I + M + M^2 + ... + M^n \]
+However, according by the previous observations this sum reduces to $M^2$, so we conclude that $M^* = M^2$.  Notice that $M^2$ contains the product $AB$, and its construction costs $O(|A| + |B|)$ which is also the size of the input.  Therefore, we have reduced the boolean matrix product of $A,B$ to the cost of computing $M^*$.
+
+\end{document}

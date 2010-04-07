@@ -1,0 +1,139 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{clrscode}
+\usepackage{amsmath}
+
+\title{CS787 Homework 4}
+\author{Mikola Lysenko}
+
+\begin{document}
+
+\maketitle{}
+
+\paragraph{} \textbf{1.}
+Let $A, B$ be the two components of the bipartite graph $K_{n,n}$ each containing $n$ elements.  Because each vertex in $A$ is connected to all vertices in $B$ by a single edge and likewise back to all vertices in $A$ by a path of length 2, it would be impossible to disconnect $A$ unless all vertices in $B$ were completely removed.  A symmetric argument holds in the case of $B$.  Therefore, the only way to disconnect $K_{n,n}$ is to completely remove one of the connected components which would take at least $n$ vertices.
+
+\paragraph{} \textbf{2.}
+Consider $G$, a $k \times k$ square grid embedded in the plane with unit length edges.  The planar separator theorem assures us that we have some separator $S \subset G$ which partitions $G$ into two disconnected components, where each component, $C,C' \subset G$, contains at least $k^2/3 - 4k$ vertices.  Note that due to the embedding of $G$, $S \cup C$ forms a polygon whose area may be expressed using Pick's theorem:
+\[ A = I + B - 1 \]
+Where $A$ is the area of $S \cup C$, $I$ is the number of interior points in $S \cup C$ and $B$ is the number of points on the boundary, $\partial(S \cup C)$.  Because $I + B = |S \cup C| \geq |C|$:
+\[ A \geq k^2/3 - 4k - 1 \]
+Now suppose that there was some circle with radius $r$ and area $A$, then:
+\begin{eqnarray*}
+\pi r^2 & = & A \\
+\pi r^2 & \geq & k^2/3 - 4k -1 \\
+r & \geq & \frac{1}{\sqrt{\pi}}\sqrt{k^2/3 - 4k - 1}
+\end{eqnarray*}
+The circumference of this circle, $c=2 \pi r$, satisifies
+\[ c \geq 2 \sqrt{\pi(k^2/3 - 4k - 1)} > (2 + \epsilon) k \]
+for all $0 < \epsilon < 2 \sqrt{\pi / 3} - 2$ and sufficiently large $k$.  Now recall a well-known theorem from the calculus of variations: a circle has maximal area for a given circumference.  Combined with the fact that each edge in $G$ is unit length, this implies that the number of edges in $\partial(S \cup C)$ is strictly larger than $(2 + \epsilon)k$.  A symmetric argument holds for the other connected component $C'$, and so:
+\begin{eqnarray*}
+|\partial(S \cup C')| + |\partial(S \cup C)| > (4 + 2 \epsilon) k
+\end{eqnarray*}
+Because $|\partial G| = 4k$, $G = S \cup C \cup C'$ and $C \cap C' = \emptyset$, $S$ must contain at least $2 \epsilon k$ vertices.  Fixing $n = k^2$, we conclude that all $1/3-2/3$ separators for this family of graphs contain $\Omega(\sqrt{n})$ vertices. \footnote{Good grief.  I hope there was an easier way to prove this lower bound.}
+
+\paragraph{} \textbf{3.}
+Without loss of generality, assume that $G=(V, E, \theta, \textendash)$ is connected and triangulated, $|V| = n$, $|E| = m$ and  $v_0 \in V$.
+
+\begin{footnotesize}
+\begin{codebox}
+\Procname{$\proc{Planar-Separator}( V, E, \theta, \textendash )$}
+
+%Initialization
+\li $rank[...] \gets -\inf$
+\li $count[...] \gets 0$
+\li $parent[...] \gets \emptyset$
+\li $treeedge[...] \gets \textbf{false}$
+\li $tovisit \gets \proc{Make-Queue}(v_0)$
+\li $rank[v_0] \gets 0$
+
+%BFS tree construction
+
+\li \While{$\proc{Not-Empty}(tovisit)$}
+\li 	\Do $v \gets \proc{Pop}(tovisit)$
+\li		\For \kw{each} $v' \in \proc{Neighbors}(v)$ such that $rank[v'] > 0$
+\li			\Do $rank[v'] \gets rank[v]+1$
+\li				$count[rank[v']] \gets count[rank[v']]+1$
+\li				$parent[v'] \gets v$
+\li				$treeedge[(v,v')] \gets \textbf{true}$
+\li				$\proc{Push}(tovisit, v')$
+			\End
+		\End
+
+%Select t1
+\li $t_1 \gets 0$
+\li $s_1 \gets 0$
+\li \For $i \gets 1$ \kw{to} $\max_v{rank}$
+\li		\Do $s' \gets s_1 + count[i]$
+\li		\If{$s_1 \leq n/2$ \kw{and} $s' > n/2$}
+\li			\Then $t_1 \gets i$
+\li			\kw{break}
+			\End
+\li			$s_1 \gets s'$
+		\End
+
+%Select t0
+\li $t_0 \gets 0$
+\li $s_0 \gets 0$
+\li \For $i \gets 1$ \kw{to} $\max_v{rank}$
+\li		\Do $s' \gets s_0 + count[i]$
+\li		\If{$s_0 + 2(count[t_1] - count[t_0]) \leq 2 \sqrt{s_1}$}
+\li			\Then $t_1 \gets i$
+			\End
+\li			$s_0 \gets s'$
+		\End
+
+%Select t2
+\li $t_2 \gets 0$
+\li \For $i \gets \max_v{rank}$ \kw{to} $1$
+\li		\Do $s' \gets s_0 - count[i]$
+\li		\If{$s_0 + 2(count[t_2] - count[t_1] -1) \leq 2 \sqrt{n - s_1}$}
+\li			\Then $t_2 \gets i$
+			\End
+\li			$s_0 \gets s'$
+		\End
+
+%Compress tree
+\li $A \gets \emptyset$
+\li $B \gets \emptyset$
+\li $C \gets \emptyset$
+
+\li \For \kw{each} $v \in V$
+\li		\Do \If{$rank[v] < t_0$}
+\li			\Then $A \gets A \cup \{ v \}$
+\li			$\proc{Remove-Vertex}(G, v)$
+\li			\ElseIf{$rank[v] = t_0$}
+\li			\Then $rank[v] \gets 0$
+\li			$parent[v] \gets x$
+\li			$\proc{Add-Edge}(G, (x,v))$
+\li			\ElseIf{$rank[v] > t_2$}
+\li			\Then $C \gets C \cup \{ v \}$
+\li			$\proc{Remove-Vertex}(G, v)$
+\li			\Else
+\li			$rank[v] \gets rank[v] - t_0$	
+			\End
+		\End
+		\End
+
+\li $B \gets \proc{Locate-Cycle-With-Cost<2/3-in-dual(G)}$
+\li $G \gets G - B$
+\li $A \gets A \cup \proc{Connected-To-x}(G)$
+\li	$C \gets C \cup (G - A)$
+
+\li \kw{go to} sleep\footnote{I give up.  It's 2am and this is taking forever.}
+
+\li \Return $(A,B,C)$
+
+\end{codebox}
+\end{footnotesize}
+
+\paragraph{} \textbf{4.}
+Recall that the cycles in $G$ are defined as the orbits of the group generated by $\{ \theta, \theta^*, \textendash \}$ acting on $E$, aka $|E / \{\theta, \theta^*, \textendash\}|$.  However, since $\theta^* = \theta \circ \textendash$, this is the same as the group generated by $\{ \theta, \textendash \}$.  From class, we know that $|E / \{ \sigma_i , \textendash \}| = |E / \{ \sigma_{i+1}, \textendash \} |$, so by definition the number of cycles under $\sigma_i$ is the same as those for $\sigma_{i+1}$.
+
+\paragraph{} \textbf{5.}
+Given invertible automorphisms $\theta : E \rightarrow E, \textendash : E \rightarrow E$, construct the permutation arrays $P = (p_1, p_2, ... p_n), Q = (q_1, q_2, ... q_n)$ such that $e_{p_i} = \theta(e_i)$ and $e_{q_i} = \textendash(e_i)$ for all edges $e_x \in E, 1 \leq x \leq |E| = n$.  By definition, $G^* = (E, \theta^*, \textendash)$ where $\theta^* = \theta \circ \textendash$, which is equivalent to the permutation:
+\[ P^* = (p_{q_1}, p_{q_2}, ... p_{q_n}) \]
+Computing $P^*$ takes $O(n)$ time where $n = |E|$, therefore the cost of constructing $G^*$ from $G$ using an array representation is in $O(|E|)$.
+
+\end{document}

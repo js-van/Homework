@@ -1,0 +1,25 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{clrscode}
+\usepackage{amsmath}
+
+\title{CS787 Homework 6}
+\author{Mikola Lysenko}
+
+\begin{document}
+
+\maketitle{}
+
+\paragraph{1} Assume without loss of generality that $G = (V,E)$ is some simple, directed graph (otherwise we may immediately discard self loops and group multiple edges).  Construct some spanning forest, $T \subseteq G$ and take all edges $(u,v)$ such that $u$ is an ancestor $v$ in $T$ giving the acyclic subgraph $S$.  If $|E| \leq |V|$ then the resulting subgraph is optimal, since the spanning contains no more than $|V|$ edges and adding any additional edge to the MST would induce a cycle.  Now consider the case of a directed $K_{n,n}$ (with edges going only from the left set to the right).  Any subgraph constructed in the described method would contain exactly $n$ edges, yet the maximal acyclic subgraph contains $n^2$ edges.  Since the total number of edges is bounded by $O(V^2)$, we never do any worse than this.  Therefore, the approximation factor is good to a factor of $|V|$.
+
+\paragraph{2} Take the maximum matching of the graph.  Worst case, the difference between the maximum and the maximal is a factor of 2, which follows from the fact that:
+\[|\textrm{Maximum Matching}| \leq |\textrm{Maximal Matching}| \leq |\textrm{Vertex Cover}| \leq 2 |\textrm{Maximum Matching}|\]
+which was proved in class.
+
+\paragraph{3} Let $C \subseteq S$ be the longest chain w.r.t $\prec$ and $A$ be a minimal cardinality partition of $S$ whose subsets are antichains of $\prec$.  It is obvious that $|C| \leq |A|$, because if $|A| < |C|$ then either there must be two elements of $C$ contained in the same partition in $A$ or $A$ would not cover $S$.  We prove the second part by construction:  Take the longest chain $C$ end examine each object in $C$.  Since all pairs in $C$ are mutually comparable, we are forced to place each object in a separate anti-chain in $A$.  Moreover, since all other chains in $(S, \prec)$ are smaller than $C$, we can repeat this process for all remaining chains arbitrarily assigning each additional element to a distinct element of $A$.  When we are done, $A$ is an antichain cover of $S$ with exactly $|C|$ elements, minimizing the above inequality, therefore $|A| = |C|$.
+
+\paragraph{4} First, observe that the size of the largest antichain is less than or equal to the size of the smallest chain cover because one may pick at most one element from each chain.  As suggested in the problem statement, construct the bipartite graph $G = (S \coprod S, \{ (a,b) | a \prec b \})$.  A maximum matching of $G$ can be interpreted as a partition of $( S, \prec )$ into chains, by grouping two elements of $S$ together if there exists an edge between them in the matching.  This matching will have exactly as many elements as the number of unmatched vertices in the left subgraph.  Moreover, a minimal vertex cover in $G$ has at least one vertex per edge (since it is bipartite) and thus its complement forms an antichain.  By Konig's theorem, we know that the size of the matching is the same as the size of the vertex cover, thus the complement maximizes the above inequality.  Therefore, the size of the largest antichain must be same as the size of the smallest chain cover.
+
+\end{document}

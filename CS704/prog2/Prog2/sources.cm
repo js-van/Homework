@@ -1,0 +1,12 @@
+group is
+  $/basis.cm
+  $/smlnj-lib.cm
+  $/ml-yacc-lib.cm
+  scheme.grm
+  scheme.lex
+  util.sig
+  util.sml
+  test.sig
+  test.sml
+  schast.sig
+  schast.sml

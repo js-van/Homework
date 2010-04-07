@@ -1,0 +1,10 @@
+.DS_Store
+*~
+*.pyc
+*.aux
+*.backup
+*.blg
+*.bbl
+*.log
+*.swp
+*.o

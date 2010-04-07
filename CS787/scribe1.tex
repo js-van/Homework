@@ -1,0 +1,80 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{clrscode}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\title{Primal-Dual Schema}
+\author{Mikola Lysenko}
+
+\begin{document}
+
+\maketitle{}
+
+\paragraph{Motivation} So far we have been talking about linear programs and it's applications to finding approximate solutions for various integer programs.  This lecture introduces a method for analyzing these types of approximations.  First a quick review:
+
+\paragraph{Linear Programs} A linear program is given by a tuple $(A, b, c)$ where $A$ is an $n \times m$ matrix, $b$ is a $n \times 1$ column vector, and $c$ a $1 \times m$ row vector and defines the following (potentially empty) convex set:
+\[ \underset{x \in \Re^{m+} | A x \leq b} { \operatorname{argmin} } c x \]
+The dual of a linear program is defined as
+\[ (A, b, c)^* = (-A^T, -c^T, -b^T) \]
+Which gives the set
+\[ \underset{y \in \Re^{n+} | -A^T y \leq -c^T } { \operatorname{argmin} } -b^T y =  \underset{y \in \Re^{n+} | A^T y \geq c^T } { \operatorname{argmax} } b^T y \]
+A solution to a program is a point within the aforementioned set.  The set $\{ x | A x \leq b \}$ is known as the feasible space of a linear program.  Recall that if a pair of points $x, y$  are a solution for $(A,b,c), (A,b,c)^*$ respectively if and only if
+\begin{eqnarray}
+\forall{ j \in [1, m] } \: : x_j \sum \limits_{i=1}^n A_{i,j} y_i & = &  c_j x_j \\
+\forall{ i \in [1, n] } \: : y_i \sum \limits_{j=1}^n A_{i,j} x_j & = &  b_i y_i
+\end{eqnarray}
+
+\paragraph{Approximate Complementary Slackness}
+Equations 1 and 2 are called the primal and dual complementary slackness conditions and are both necessary and sufficient conditions for optimality.  We now introduce a somewhat less strict condition on a (possibly infeasible) solution pair $(x,y)$ for $(A,b,c)$ known as approximate slackness; given scalars $\alpha, \beta \geq 1$
+\begin{eqnarray}
+\forall{ j \in [1, m] } \: : \frac{c_j}{ \alpha } x_j \leq &  x_j \sum \limits_{i=1}^n A_{i,j} y_i &  \leq c_j x_j \\
+\forall{ i \in [1, n] } \: : b_i y_i \leq & y_i \sum \limits_{j=1}^n A_{i,j} x_j & \leq  \beta b_i y_i 
+\end{eqnarray}
+Now suppose that equations 3, 4 hold for some $(x,y)$; then we know:
+\begin{eqnarray*}
+\sum \limits_{j=1}^m \frac{c_j}{ \alpha } x_j & \leq &  \sum \limits_{j=1}^m x_j \sum \limits_{i=1}^n A_{i,j} y_i \\
+\sum \limits_{j=1}^m x_j \sum \limits_{i=1}^n A_{i,j} y_i & = &  \sum \limits_{i=1}^n  y_i \sum \limits_{j=1}^m A_{i,j} x_j \\
+\sum \limits_{i=1}^n  y_i \sum \limits_{j=1}^m A_{i,j} x_j & \leq &  \sum \limits_{i=1}^n \beta b_i y_i \\
+\sum \limits_{j=1}^m \frac{c_j}{ \alpha } x_j & \leq & \sum \limits_{i=1}^n \beta b_i y_i
+\end{eqnarray*}
+And thus we arrive at the following condition:
+\begin{eqnarray}
+\sum \limits_{j=1}^m c_j x_j & \leq & \alpha \beta \sum \limits_{i=1}^n b_i y_i
+\end{eqnarray}
+The values $\alpha, \beta$ determine the amount of deviation from an optimality.  In the case where $\alpha = \beta = 1$, then the exact complementary slackness of equations 1, 2 is satisified and we would have an optimal solution.  As $\alpha, \beta$ grow larger, the bounds on the quality of the approximation gets worse.
+
+\paragraph{Example: Set Cover}
+The set cover problem can be stated as follows: given a collection of sets $\mathcal{S}$, some points $U \subset \bigcup \limits_{ S \in \mathcal{S} } S$ and a scalar cost function $c(S) : \mathcal{S} \rightarrow \Re^+$, find the collection of sets $X \subset \mathcal{S}$ such that $U \subseteq \bigcup \limits_{S \in X} S$ minimizing $\sum \limits_{S \in X} c(S)$.  This problem can be concisely written as an integer program
+\begin{center}
+\begin{tabular*}{0.75\textwidth}{r@{\extracolsep{\fill}}l}
+Primal: $ \underset{x \in \mathbb{Z}^{\mathcal{S}} | e \in U \rightarrow \sum \limits_{e \in S} x_S \geq 1 } { \operatorname{argmin} } c(S) x_S $ & Dual: $ \underset{y \in \Re^U | S \in \mathcal{S} \rightarrow \sum \limits_{e \in S} y_e \leq c(S) } { \operatorname{argmax} } y_e $ \\
+\end{tabular*}
+\end{center}
+Now consider the following approximation algorithm for set-cover:
+\begin{codebox}
+\li $x \gets 0, y \gets 0$
+\li \While $\exists y_e = 0$
+\li	\Do	Pick an uncovered $e$
+\li		$S_{min} \gets \emptyset, y_{min} \gets \infty$
+\li		\For each $S \ni e$
+\li			\Do $y' \gets \sum \limits_{e' \in S - \{ e \} } y_{e'}$
+\li				\If $y' < y_min$ and $y' > 0$ 
+\li					\Then $S_{min} \gets S, y_{min} \gets y'$
+				\End
+			\End
+\li		$x_S \gets 1, y_e \gets y_{min}$
+	\End
+\end{codebox}
+This algorithm achieves an approximation factor of $f$, where $f$ is the maximum number of times a given element is covered.  To show this, first observe that it is obvious all elements are eventually covered, and so there are no overpacked sets (more formally, $\forall S : \sum \limits_{e \in S} y_e \leq c(S)$).  Thus, the final solution is both primal and dual feasible.  Pick approximation factors $\alpha = 1, \beta = f$, thus we have a $f$-factor approximation.
+
+To show this bound is tight, consider the following example.  Let 
+\[ U = \{ e_0, ... e_n \} \]
+\[ S = \{ \{ e_0, e_1 \}, \{ e_0, e_2 \}, ..., \{ e_0, e_{n-1} \} \} \cup U \] 
+\[c( \{e_0, e_i\} ) = 1, \forall i \in 1..n-1 \]
+\[ c(U) = 1 + \epsilon, \epsilon > 0 \]
+The optimal solution is to pick the cover $\{ U \}$ with total cost $1 + \epsilon$, while the above algorithm will end up picking all sets in $S$ for a total cost of $n + \epsilon$.
+
+\end{document}

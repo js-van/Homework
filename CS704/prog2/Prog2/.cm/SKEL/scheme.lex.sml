@@ -1,0 +1,2 @@
+Skeleton 5
+ae"SchemeLexFun"i2aä¢Tokens"gp1c"Scheme_TOKENS"f4ä¢Int"ä¢String"d"TextIO"ä¢Vector"h3aä¢UserDeclarations"h1aÿgp1ÿaä¢Internal"h1aä¢StartStates"h0bbbd2bc2egp1ÿegp2ÿ3ÿ‚f3ÿ1ÿÿ3f2ÿ	ÿ3f5Cd"Char"ÿ7ÿÿ	ÿ3Næ0ÿƒ

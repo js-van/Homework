@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\usepackage{clrscode}
+
+\title{CS787 Homework 2}
+\author{Mikola Lysenko}
+
+\begin{document}
+
+\maketitle{}
+
+\paragraph{} \textbf{1.}
+
+i. $\emptyset \subseteq V$ is vacuously covered by any matching, so $\emptyset \in \mathcal{I}$.
+
+ii. If $I \in \mathcal{I}$ is covered by a matching, then the same matching must cover all subsets of $I$, so $\mathcal{I}$ satisifies downward closure.
+
+iii. Suppose $I, J \in \mathcal{I}$ and $|I| < |J|$.  By definition there exist matchings $M_I, M_J$ covering the vertices in both $I,J$.  If there are any vertices in $J - I$ which are incident to $M_I$, then we may add them immediately to $I$, so without loss of generality assume that the vertices $J-I \subseteq M_J-M_I$.  With respect to $M_I \cup M_J$ each vertex, $c \in M_J - M_I$ has degree exactly 1 and is thus the start of a unique maximal path with edges alternating in $M_J, M_I$.  By partitioning, there are only 3 places where the path can end:
+
+a. $M_J - M_I$
+
+b. $M_I - M_J - I$
+
+c. $I - M_J$
+
+Now it is known by hypothesis that $|I - M_J| \leq |I - J| < |J - I| \leq |M_J - M_I|$, so there always exists some path which does not end in case c.  In either case a or b, take the symmetric difference of the path with $M_I$ to create a matching containing $c$ and covering $I$.  By induction, this eventually reduces $|M_J - M_I| = |J - I|$ thereby forcing the exchange of some element in $J-I$ to $I$.
+
+Thus, we have shown that the matroid axioms hold for $(S, \mathcal{I})$.
+
+\paragraph{} \textbf{2.}
+Let $G = ( Q \cup S, E )$ be a bipartite graph with components $S,Q$ and edges $E = \{ (q_i, e_i) | q_i \in Q, e_j \in q_i \} $.  Then any matching $M = \{ (q_{i(1)},e_{j(1)}), ..., (q_{i(t)},e_{j(t)}) \}$ of $G$ has distinct $e_{j(k)}$ with each $e_{j(k)}$ associated to a unique $q_{i(k)}$, and is thus is a transversal.  Additionally, in any transversal $T = \{ e_{j(1)}, ... e_{j(t)} \}$ each $e_{j(k)}$ and $q_{i(k)}$ are distinct and form an edge within $G$.  Therefore partial transversals of $(S,Q)$ are equivalent to matchings on $G$.
+
+To build the transversal matroid, take the construction for $G$ given above and compose it with the definition from problem 1's matching matroid.
+
+\paragraph{} \textbf{3.}  \footnote{This proof is slightly more general than required as it does not make use of the fact that each $B_i$ is disjoint.}
+Let $S = B_1 \cup ... \cup B_m$ as described and pick $Q = \{ B_{i,k} | 1 \leq k \leq d_i, 1 \leq i \leq m \}$ where $B_{i,j} = B_i$.  Then any partial transversal $T = \{ e_{j(k)} \}$ of $(S,Q)$ also satisfies $T \subseteq S$ and that for all $B_i$, $B_i \cap T$ contains no more than $d_i$ members of $S$, so $|T \cap B_i| \leq d_i$.  Next, take any $I \subseteq S$ such that for all $B_i$, $|I \cap B_i| \leq d_i$, and match each element of $e \in I \cap B_i$ to some distinct $B_{i,j}$ (which is always possible by cardinality) giving some partial transversal of $(S,Q)$.  Therefore, each $I$ is equivalent to a unique partial transversal up to permutation, and the partition matroid is therefore a special case of the transversal matroid. 
+
+\paragraph{} \textbf{4.}
+Let $G=(V,E)$ be a graph. For each vertex, $v_i \in V$, let $B_i \subseteq E$ be the edges incident to $v_i$.  Then any partition $S = B_1 \cup ... \cup B_m$ with limits $d_i = 1$ satisfies the property that no edge is incident to no more than one vertex.  Moreover, for any collection of edges in $G$ satisfying the property are also a partition of $S, d_i$ (as each edge appears in no $B_i$ more than once and each $d_i = 1$).  So, we obtain a matroid by invoking problem 3.  The from case is equivalent to solving the problem on the transpose of $G$.
+
+If a subset, $I$, of edges is independent in both matroids, then for each vertex $v$ the both the number of edges in $I$ incident to or from any $v$ is no more than 1.  To generate these sets, we modify the above construction by adding the additional sets $B_i'$ of all edges incident from $v$ along with the limits $d_i'=1$.
+
+\paragraph{} \textbf{5.}
+The only constraint on subsets of $W$ is that "the same row can have at most one element"; therefore, each row may be considered independently.  Within a single row, we are only allowed to choose one element so the maximum weight must equal the weight of the maximum element.  This gives the following algorithm:
+
+\begin{codebox}
+\Procname{$\proc{Max-Weight}( W )$}
+\li $S \gets \emptyset$
+\li \For $i \gets 1$ \To $m$
+\li     \Do $S \gets S \cup \textrm{min}( \{ w_{ij} | j \in [1,n] \} )$
+    \End
+\li \Return $S$
+\end{codebox}
+
+To express this problem as a matroid, we partition $W$ row-wise into sets $q_i = \{ w_{i,1}, ... w_{i,j} \}$ and apply the transversal matroid from problem 2 (weighting the elements according to $W$.)  A valid transversal, $T = \{ w_{1,j(1)}, ..., w_{m,j(m)} \}$, satisifies the constraint that no two elements are in the same row and moreover, a maximum weight transversal also 
+
+\paragraph{} \textbf{6.}
+First observe that the total amount of time needed to complete $n$ jobs on the machine is no greater than $n$, as each job has a unit cost, so without loss of generality assume that each $d_i \leq n$.  Let $S = \{ e_1, ..., e_n \}$ be the collection of jobs, each with deadline $d_j$ and penalty $p_n$ as described and $Q = \{ q_1, ... q_n \}$ with $q_t = \{ e_j | 1 \leq j \leq n, d_j \leq t \}$.  A partial transversal of $(S, Q)$ is also a valid schedule for the machine, as each job, $e_{j(t)}$ associated with some particular $q_t$ could be executed at the time $t$ and by symmetry each schedule with a job, $e_{j(t)}$ at time $t$ is a partial transversal.  Therefore, the set of valid schedules containing no empty time slots forms a matroid.
+
+Now, assign weights to jobs within the transversal matroid equal to their penalty.  As a result, a maximum weight schedule minimizes the total penalties of the jobs which were not executed.  So, we conclude that the optimal schedule can be found greedily.
+
+\end{document}

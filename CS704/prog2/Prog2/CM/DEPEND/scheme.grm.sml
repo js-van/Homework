@@ -1,0 +1,2 @@
+Decl 8
+f%SchemeLrValsFun.f-sqsToken.v$TOKEN.;-;;;sqsParserData.sqsHeader.ssSchemeAST.vSchAST.;-;-;sLrTable.vToken.LrTable.;-;sToken.vToken.;-;lqovLrTable.;;;qrString.Array.Char.LrTable.;;lqovHeader.;;;qsMlyValue.srSchemeAST.;-;rMlyValue.SchemeAST.;;sEC.sqovLrTable.;;lqovHeader.;;;qrMlyValue.;;;-;sActions.sqlqovHeader.;;;qrSchAST.List.MlyValue.SchemeAST.LrTable.;;rMlyValue.;;-;;-;sTokens.srToken.ParserData.;+v$Scheme_TOKENS.;;;+sqsParserData.v$PARSER_DATA.;-;sTokens.v$Scheme_TOKENS.;-;;;

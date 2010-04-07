@@ -1,0 +1,47 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{clrscode}
+\usepackage{amsmath}
+
+\title{CS787 Homework 7}
+\author{Mikola Lysenko}
+
+\begin{document}
+
+\maketitle{}
+
+\paragraph{1} 
+A linear program is given by a tuple $( A, b, c )$, where $c$ is an $1 \times n$ row vector, $A$ an $m \times n$ matrix and $b$ a $m \times 1$ column and interpreted as the following problem:
+\begin{center}
+Maximize $c x$
+
+Subject To: $A x \leq b$
+
+$x \geq 0$
+\end{center}
+The dual of a linear program is given as follows:
+\[ ( A, b, c)^* \equiv (-A^T, -c^T, -b^T) \]
+Direct substitution verifies that $(A,b,c)^{**} = (A,b,c)$, so the dual of the dual is the primal.  Both equalities and greater-than constraints may be constructed within the standard linear programming framework:
+\begin{eqnarray*}
+\{ x | a_i x \geq b_i \} & = & \{ x | -a_i x \leq -b_i \} \\
+\{ x | a_i x = b_i \} & = & \{ x | -a_i x \leq -b_i \} \cap \{ x | a_i \leq b_i \}
+\end{eqnarray*}
+For each equality constraint in the primal there exists a pair of dual vectors $y_1, y_2$ such that $b y_1 = -b y_2$ and $A^t y_1 = -A^t y_2$.  Picking $y_2 = y_1$ gives $A(y_1 + y_2) = A y_1 - A y_1 = 0$, so the convex hull is unbounded in the positive $y_1, y_2$ dimensions (or interpreting the sum $y_1 + y_2$ as a single unconstrained variable).  If a primal variable, $x$ is unbounded, then the objective function of the dual must be linearly independent of the $x$ basis vector.  If the solution is unbounded, then the dual program must be infeasible.
+
+\paragraph{2}
+The linear program given is exactly the flow network for bipartite matching.  In class we proved that network flow is unimodular, and so the problem must have integer optimal solutions (along with the dual min-cut).  Expanding the dual formally gives the following program:
+\begin{center}
+Minimize $\sum \limits_{v \in V} y_v$
+
+Subject To: $y_u + y_v \geq 1$ for each edge $(u,v) \in E$
+
+$y_v \geq 0$
+\end{center}
+Which is exactly the definition of minimum vertex cover.  Moreover, the primal program is feasible (pick the trivial matching of no edges), and so there must exist some maximum bipartite matching, and likewise the dual has the trivial feasible solution of $y = \textbf{1}$.  By strong duality, we know that the primal solution must equal the dual solution.  Thus we have shown that the size of the maximum matching is the same as the size of the minimum vertex cover (Konig's theorem).
+
+\paragraph{3} 
+In class, we described how to do dual fitting for set-cover.  For set-multicover, we reduce the problem to set-cover by duplicating each element $r_e$ times and adding the additional copies to the remaining sets.  Thus, we achieve an approximation within a factor of $O(H_n)$ (where $H_n$ is the n-th Harmonic number).
+
+\end{document}

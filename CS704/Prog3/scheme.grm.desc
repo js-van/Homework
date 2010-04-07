@@ -1,0 +1,773 @@
+
+state 0:
+
+	START : . PROG 
+
+	LPAREN	shift 2
+
+	START	goto 64
+	PROG	goto 1
+
+	.	error
+
+
+state 1:
+
+	START : PROG .  (reduce by rule 0)
+
+
+
+	.	reduce by rule 0
+
+
+state 2:
+
+	PROG : LPAREN . EQNLIST RPAREN 
+
+	LPAREN	shift 5
+
+	EQN	goto 4
+	EQNLIST	goto 3
+
+	.	error
+
+
+state 3:
+
+	PROG : LPAREN EQNLIST . RPAREN 
+
+	RPAREN	shift 6
+
+
+	.	error
+
+
+state 4:
+
+	EQNLIST : EQN .  (reduce by rule 4)
+	EQNLIST : EQN . EQNLIST 
+
+	LPAREN	shift 5
+
+	EQN	goto 4
+	EQNLIST	goto 7
+
+	.	reduce by rule 4
+
+
+state 5:
+
+	EQN : LPAREN . DEFINE LPAREN ID RPAREN EXP RPAREN 
+	EQN : LPAREN . DEFINE LPAREN ID VARLIST RPAREN EXP RPAREN 
+
+	DEFINE	shift 8
+
+
+	.	error
+
+
+state 6:
+
+	PROG : LPAREN EQNLIST RPAREN .  (reduce by rule 1)
+
+
+
+	.	reduce by rule 1
+
+
+state 7:
+
+	EQNLIST : EQN EQNLIST .  (reduce by rule 5)
+
+
+
+	.	reduce by rule 5
+
+
+state 8:
+
+	EQN : LPAREN DEFINE . LPAREN ID RPAREN EXP RPAREN 
+	EQN : LPAREN DEFINE . LPAREN ID VARLIST RPAREN EXP RPAREN 
+
+	LPAREN	shift 9
+
+
+	.	error
+
+
+state 9:
+
+	EQN : LPAREN DEFINE LPAREN . ID RPAREN EXP RPAREN 
+	EQN : LPAREN DEFINE LPAREN . ID VARLIST RPAREN EXP RPAREN 
+
+	ID	shift 10
+
+
+	.	error
+
+
+state 10:
+
+	EQN : LPAREN DEFINE LPAREN ID . RPAREN EXP RPAREN 
+	EQN : LPAREN DEFINE LPAREN ID . VARLIST RPAREN EXP RPAREN 
+
+	RPAREN	shift 13
+	ID	shift 12
+
+	VARLIST	goto 11
+
+	.	error
+
+
+state 11:
+
+	EQN : LPAREN DEFINE LPAREN ID VARLIST . RPAREN EXP RPAREN 
+
+	RPAREN	shift 14
+
+
+	.	error
+
+
+state 12:
+
+	VARLIST : ID .  (reduce by rule 24)
+	VARLIST : ID . VARLIST 
+
+	ID	shift 12
+
+	VARLIST	goto 15
+
+	.	reduce by rule 24
+
+
+state 13:
+
+	EQN : LPAREN DEFINE LPAREN ID RPAREN . EXP RPAREN 
+
+	LPAREN	shift 23
+	ID	shift 22
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+
+	EXP	goto 17
+	CONST	goto 16
+
+	.	error
+
+
+state 14:
+
+	EQN : LPAREN DEFINE LPAREN ID VARLIST RPAREN . EXP RPAREN 
+
+	LPAREN	shift 23
+	ID	shift 22
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+
+	EXP	goto 24
+	CONST	goto 16
+
+	.	error
+
+
+state 15:
+
+	VARLIST : ID VARLIST .  (reduce by rule 25)
+
+
+
+	.	reduce by rule 25
+
+
+state 16:
+
+	EXP : CONST .  (reduce by rule 6)
+
+
+
+	.	reduce by rule 6
+
+
+state 17:
+
+	EQN : LPAREN DEFINE LPAREN ID RPAREN EXP . RPAREN 
+
+	RPAREN	shift 25
+
+
+	.	error
+
+
+state 18:
+
+	CONST : FALSE .  (reduce by rule 15)
+
+
+
+	.	reduce by rule 15
+
+
+state 19:
+
+	CONST : TRUE .  (reduce by rule 14)
+
+
+
+	.	reduce by rule 14
+
+
+state 20:
+
+	CONST : NIL .  (reduce by rule 16)
+
+
+
+	.	reduce by rule 16
+
+
+state 21:
+
+	CONST : NUM .  (reduce by rule 13)
+
+
+
+	.	reduce by rule 13
+
+
+state 22:
+
+	EXP : ID .  (reduce by rule 7)
+
+
+
+	.	reduce by rule 7
+
+
+state 23:
+
+	EXP : LPAREN . IF EXP EXP EXP RPAREN 
+	EXP : LPAREN . CALL ID EXPLIST RPAREN 
+	EXP : LPAREN . OP EXPLIST RPAREN 
+	CONST : LPAREN . QUOTE QUOTABLE RPAREN 
+
+	IF	shift 39
+	CALL	shift 38
+	QUOTE	shift 37
+	PLUS	shift 36
+	MINUS	shift 35
+	EQL	shift 34
+	TIMES	shift 33
+	DIV	shift 32
+	MOD	shift 31
+	CONS	shift 30
+	CAR	shift 29
+	CDR	shift 28
+	NULL	shift 27
+
+	OP	goto 26
+
+	.	error
+
+
+state 24:
+
+	EQN : LPAREN DEFINE LPAREN ID VARLIST RPAREN EXP . RPAREN 
+
+	RPAREN	shift 40
+
+
+	.	error
+
+
+state 25:
+
+	EQN : LPAREN DEFINE LPAREN ID RPAREN EXP RPAREN .  (reduce by rule 2)
+
+
+
+	.	reduce by rule 2
+
+
+state 26:
+
+	EXP : LPAREN OP . EXPLIST RPAREN 
+
+	LPAREN	shift 23
+	ID	shift 22
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+
+	EXP	goto 42
+	EXPLIST	goto 41
+	CONST	goto 16
+
+	.	error
+
+
+state 27:
+
+	OP : NULL .  (reduce by rule 37)
+
+
+
+	.	reduce by rule 37
+
+
+state 28:
+
+	OP : CDR .  (reduce by rule 36)
+
+
+
+	.	reduce by rule 36
+
+
+state 29:
+
+	OP : CAR .  (reduce by rule 35)
+
+
+
+	.	reduce by rule 35
+
+
+state 30:
+
+	OP : CONS .  (reduce by rule 34)
+
+
+
+	.	reduce by rule 34
+
+
+state 31:
+
+	OP : MOD .  (reduce by rule 33)
+
+
+
+	.	reduce by rule 33
+
+
+state 32:
+
+	OP : DIV .  (reduce by rule 32)
+
+
+
+	.	reduce by rule 32
+
+
+state 33:
+
+	OP : TIMES .  (reduce by rule 31)
+
+
+
+	.	reduce by rule 31
+
+
+state 34:
+
+	OP : EQL .  (reduce by rule 30)
+
+
+
+	.	reduce by rule 30
+
+
+state 35:
+
+	OP : MINUS .  (reduce by rule 29)
+
+
+
+	.	reduce by rule 29
+
+
+state 36:
+
+	OP : PLUS .  (reduce by rule 28)
+
+
+
+	.	reduce by rule 28
+
+
+state 37:
+
+	CONST : LPAREN QUOTE . QUOTABLE RPAREN 
+
+	LPAREN	shift 49
+	IF	shift 48
+	CALL	shift 47
+	ID	shift 46
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+	PLUS	shift 36
+	MINUS	shift 35
+	EQL	shift 34
+	TIMES	shift 33
+	DIV	shift 32
+	MOD	shift 31
+	CONS	shift 30
+	CAR	shift 29
+	CDR	shift 28
+	NULL	shift 27
+
+	CONST	goto 45
+	QUOTABLE	goto 44
+	OP	goto 43
+
+	.	error
+
+
+state 38:
+
+	EXP : LPAREN CALL . ID EXPLIST RPAREN 
+
+	ID	shift 50
+
+
+	.	error
+
+
+state 39:
+
+	EXP : LPAREN IF . EXP EXP EXP RPAREN 
+
+	LPAREN	shift 23
+	ID	shift 22
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+
+	EXP	goto 51
+	CONST	goto 16
+
+	.	error
+
+
+state 40:
+
+	EQN : LPAREN DEFINE LPAREN ID VARLIST RPAREN EXP RPAREN .  (reduce by rule 3)
+
+
+
+	.	reduce by rule 3
+
+
+state 41:
+
+	EXP : LPAREN OP EXPLIST . RPAREN 
+
+	RPAREN	shift 52
+
+
+	.	error
+
+
+state 42:
+
+	EXPLIST : EXP .  (reduce by rule 11)
+	EXPLIST : EXP . EXPLIST 
+
+	LPAREN	shift 23
+	ID	shift 22
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+
+	EXP	goto 42
+	EXPLIST	goto 53
+	CONST	goto 16
+
+	.	reduce by rule 11
+
+
+state 43:
+
+	QUOTABLE : OP .  (reduce by rule 20)
+
+
+
+	.	reduce by rule 20
+
+
+state 44:
+
+	CONST : LPAREN QUOTE QUOTABLE . RPAREN 
+
+	RPAREN	shift 54
+
+
+	.	error
+
+
+state 45:
+
+	QUOTABLE : CONST .  (reduce by rule 18)
+
+
+
+	.	reduce by rule 18
+
+
+state 46:
+
+	QUOTABLE : ID .  (reduce by rule 19)
+
+
+
+	.	reduce by rule 19
+
+
+state 47:
+
+	QUOTABLE : CALL .  (reduce by rule 22)
+
+
+
+	.	reduce by rule 22
+
+
+state 48:
+
+	QUOTABLE : IF .  (reduce by rule 21)
+
+
+
+	.	reduce by rule 21
+
+
+state 49:
+
+	CONST : LPAREN . QUOTE QUOTABLE RPAREN 
+	QUOTABLE : LPAREN . QUOTABLELIST RPAREN 
+
+	LPAREN	shift 49
+	IF	shift 48
+	CALL	shift 47
+	QUOTE	shift 37
+	ID	shift 46
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+	PLUS	shift 36
+	MINUS	shift 35
+	EQL	shift 34
+	TIMES	shift 33
+	DIV	shift 32
+	MOD	shift 31
+	CONS	shift 30
+	CAR	shift 29
+	CDR	shift 28
+	NULL	shift 27
+
+	CONST	goto 45
+	QUOTABLE	goto 56
+	QUOTABLELIST	goto 55
+	OP	goto 43
+
+	.	error
+
+
+state 50:
+
+	EXP : LPAREN CALL ID . EXPLIST RPAREN 
+
+	LPAREN	shift 23
+	ID	shift 22
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+
+	EXP	goto 42
+	EXPLIST	goto 57
+	CONST	goto 16
+
+	.	error
+
+
+state 51:
+
+	EXP : LPAREN IF EXP . EXP EXP RPAREN 
+
+	LPAREN	shift 23
+	ID	shift 22
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+
+	EXP	goto 58
+	CONST	goto 16
+
+	.	error
+
+
+state 52:
+
+	EXP : LPAREN OP EXPLIST RPAREN .  (reduce by rule 10)
+
+
+
+	.	reduce by rule 10
+
+
+state 53:
+
+	EXPLIST : EXP EXPLIST .  (reduce by rule 12)
+
+
+
+	.	reduce by rule 12
+
+
+state 54:
+
+	CONST : LPAREN QUOTE QUOTABLE RPAREN .  (reduce by rule 17)
+
+
+
+	.	reduce by rule 17
+
+
+state 55:
+
+	QUOTABLE : LPAREN QUOTABLELIST . RPAREN 
+
+	RPAREN	shift 59
+
+
+	.	error
+
+
+state 56:
+
+	QUOTABLELIST : QUOTABLE .  (reduce by rule 26)
+	QUOTABLELIST : QUOTABLE . QUOTABLELIST 
+
+	LPAREN	shift 49
+	IF	shift 48
+	CALL	shift 47
+	ID	shift 46
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+	PLUS	shift 36
+	MINUS	shift 35
+	EQL	shift 34
+	TIMES	shift 33
+	DIV	shift 32
+	MOD	shift 31
+	CONS	shift 30
+	CAR	shift 29
+	CDR	shift 28
+	NULL	shift 27
+
+	CONST	goto 45
+	QUOTABLE	goto 56
+	QUOTABLELIST	goto 60
+	OP	goto 43
+
+	.	reduce by rule 26
+
+
+state 57:
+
+	EXP : LPAREN CALL ID EXPLIST . RPAREN 
+
+	RPAREN	shift 61
+
+
+	.	error
+
+
+state 58:
+
+	EXP : LPAREN IF EXP EXP . EXP RPAREN 
+
+	LPAREN	shift 23
+	ID	shift 22
+	NUM	shift 21
+	NIL	shift 20
+	TRUE	shift 19
+	FALSE	shift 18
+
+	EXP	goto 62
+	CONST	goto 16
+
+	.	error
+
+
+state 59:
+
+	QUOTABLE : LPAREN QUOTABLELIST RPAREN .  (reduce by rule 23)
+
+
+
+	.	reduce by rule 23
+
+
+state 60:
+
+	QUOTABLELIST : QUOTABLE QUOTABLELIST .  (reduce by rule 27)
+
+
+
+	.	reduce by rule 27
+
+
+state 61:
+
+	EXP : LPAREN CALL ID EXPLIST RPAREN .  (reduce by rule 9)
+
+
+
+	.	reduce by rule 9
+
+
+state 62:
+
+	EXP : LPAREN IF EXP EXP EXP . RPAREN 
+
+	RPAREN	shift 63
+
+
+	.	error
+
+
+state 63:
+
+	EXP : LPAREN IF EXP EXP EXP RPAREN .  (reduce by rule 8)
+
+
+
+	.	reduce by rule 8
+
+
+state 64:
+
+
+	EOF	accept
+
+
+	.	error
+
+100 of 201 action table entries left after compaction
+39 goto table entries
