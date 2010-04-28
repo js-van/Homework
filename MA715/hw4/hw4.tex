@@ -1,0 +1,123 @@
+\documentclass{article}
+
+\usepackage{fullpage,verbatim,amsmath,graphicx}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\begin{document}
+
+\begin{titlepage}
+ 
+\begin{center}
+ 
+\textsc{\LARGE Homework 4}\\[1.5cm] 
+
+\textsc{\Large Computational Math}\\[0.5cm]
+ 
+ 
+\HRule \\[2cm]
+ 
+% Author and supervisor
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Author:}\\
+Mikola Lysenko
+\end{flushleft}
+\end{minipage}
+ 
+\vfill
+ 
+% Bottom of the page
+{\large \today}
+ 
+\end{center}
+ 
+\end{titlepage}
+
+
+\paragraph{1}
+
+\subparagraph{a}
+Let $u$ be a solution to the given ODE.  Then, for any $2\pi$ periodic smooth function $v$ it must be that:
+\[ \int \limits_{-\pi}^{\pi} (u_{xx}(x) + \left( \sin(x) + \cos(x) + 2 \sin(x) \cos(x) \right) u(x)) v(x) dx = \int \limits_{-\pi}^{\pi} e^{\sin(x)} e^{\cos(x)} v(x) dx \]
+By linearity, we can split the righthand side into homogeneous components and apply integration by parts.  For the second order components we get:
+\begin{eqnarray*}
+\int \limits_{-\pi}^{\pi} u_{xx}(x) v(x) dx & = & u_{x}(x)v(x) |_{-\pi}^{\pi} - \int \limits_{-\pi}^{\pi} u_{x}(x) v_x(x) dx \\
+& = & -\int \limits_{-\pi}^{\pi} u_x(x) v_x(x) dx \\
+& = & p_2(u, v)
+\end{eqnarray*}
+
+For the 0th order terms, no additional work is necessary to get a bilinear form:
+\[ \int \limits_{-\pi}^{\pi} \left( \sin(x) + \cos(x) + 2 \sin(x) \cos(x) \right) u(x) v(x) dx = p_0(x) \]
+
+And finally for the right hand side, we construct $f(v)$:
+\[ \int \limits_{-\pi}^{\pi} e^{\sin(x)} e^{\cos(x)} v(x) dx = f(v) \]
+
+By construction our space of test functions satisifies the boundary, so we have the following weak form for the system:
+\[ u^T (p_2 + p_0) v = f^T v \]
+
+\subparagraph{b}
+
+To get a cG(1) finite element discretization, we restrict the space of test functions and solutions to piecewise linear maps, spanned by the basis of hat functions.  Fix a collection of $n$ ordered grid points $X = \{ x_i \in [-\pi, \pi) | x_i < x_{i+1}, i \in [0,N) \}$ where $x_0 = -\pi$.  Now we define the basis hat functions, $\varphi^i(x)$ as follows:
+
+\[ \varphi^i(x) = \left \{ \begin{array}{cc}
+\frac{x_{i+1} - x}{x_{i+1} - x_{i}} & \textrm{if } x \in [x_{i},   x_{i+1}) \\
+\frac{x - x_{i-1}}{x_{i} - x_{i-1}} & \textrm{if } x \in [x_{i-1}, x_{i})   \\
+0 & \textrm{otherwise}
+\end{array} \right. \]
+
+With the exception that for $x_0, x_{n-1}$ boundary conditions are applied to make the grid cyclic.  This may be done by just taking the indexes mod $n$ and the difference terms mod $2 \pi$.  Substituting this into the above equation gives the following matrix equation for the discrete Galerkin equation:
+
+\[ p_2(\varphi^i, \varphi^j) + p_0(\varphi^i, \varphi^j) = f(\varphi^j) \]
+
+Now we expand each term separately and integrate piecewise.  Starting with $p_2$:
+
+\begin{eqnarray*}
+p_2(\varphi^i, \varphi^j) & = & - \int \limits_{-\pi}^{\pi} \varphi^i_x(x) \varphi^j_x(x) dx \\
+& = & \left( \delta_{i,j+1} - \delta_{i,j} \right) \int \limits_{x_{i-1}}^{x_{i}} \left( \frac{1}{x_{i} - x_{i-1}} \right)^2 dx 
++ \left( \delta_{i,j-1} - \delta_{i,j} \right) \int \limits_{x_{i}}^{x_{i+1}}  \left( \frac{1}{x_{i+1} - x_{i}} \right)^2 dx \\
+& = & \left( \delta_{i,j+1} - \delta_{i,j} \right) \frac{1}{x_{i} - x_{i-1}} 
++ \left( \delta_{i,j-1} - \delta_{i,j} \right) \frac{1}{x_{i+1} - x_{i}}
+\end{eqnarray*}
+
+Next we deal with $p_0$:
+\begin{eqnarray*}
+p_0(\varphi^i, \varphi^j) & = & \\
+\end{eqnarray*}
+
+And finally $f$:
+\begin{eqnarray*}
+f(\varphi^i) & = & \\
+\end{eqnarray*}
+
+Putting this together, we get the following coefficient matrix, $M_{i,j}$, such that:
+\begin{eqnarray*}
+M_{i,j} & = & p_2(\varphi^i, \varphi^j) + p_0(\varphi^i, \varphi^j)
+\end{eqnarray*}
+
+And for the right hand side, we get $b_i$ such that:
+\begin{eqnarray*}
+b_i & = & f(\varphi^i)
+\end{eqnarray*}
+
+And so the final problem is to solve for some coefficients $u^i$ such that:
+\[ M u = b \]
+
+\subparagraph{c}
+
+\paragraph{2}
+
+\subparagraph{a}
+
+To start with, we modify $p_0$ and $f$ from part 1, giving the following new form for $M$ and $b$:
+\[ M_{i,j} = \]
+
+And:
+\[ b_i = \]
+
+To compute the error within the $i^{th}$ node we do 'blah'
+
+\subparagraph{b}
+
+\subparagraph{c}
+
+\end{document}

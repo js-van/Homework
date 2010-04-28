@@ -25,7 +25,6 @@ for i in range(M):
     tmp2 = (fun1(xbig[i+1],xbig[i+2]) + fun1(xbig[i+2],xbig[i+2]))*.5*h
     b[i] = tmp1 - tmp2
 
-
 print A
 print b
 
