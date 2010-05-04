@@ -1,0 +1,116 @@
+\documentclass{article}
+
+\usepackage{fullpage,amsmath,amsfonts}
+
+\begin{document}
+
+\newcommand{\hpl}[3]{ \left \{ #1 \right \} #2 \left \{ #3 \right \} }
+\newcommand{\derive}[2]{\begin{array}{c} #1 \\ \hline #2 \\ \end{array} }
+\renewcommand{\and}{,}
+
+\paragraph{1}
+To do this, we introduce the following preconditions and postconditions on the fragment, $C$
+\[ \derive{}{\{ x = a \and y = b \} C \{ x = b \and y = a \}} \]
+We now apply the assignment, consequence and composition axiom schemas several times to verify the expression:
+\begin{equation*}
+\begin{tiny}
+\derive{
+ \derive{
+ 	\derive{}{
+ 	  \hpl{x = a \and y = b}{x = x \oplus b}{x = a \oplus b \and y = b}} \and
+ 	\derive{}{
+ 	  \hpl{x = a \oplus b \and y = b}{y = x \oplus y}{x = a \oplus b \and y = a}}
+ 	}{
+	\hpl{x = a \and y = b}{x = x \oplus y; y = x \oplus y ;}{x = a \oplus b \and y = a}} \and
+ \derive{}{
+ 	\hpl{x = a \oplus b \and y = a}{x = y \oplus x ;}{x = b  \and y = a }}}{ 
+ \hpl{x = a \and y = b}{x = x \oplus y; y = x \oplus y ; x = x \oplus y ;}{x = b \and y = a} }
+\end{tiny}
+\end{equation*}
+(Note that $\oplus$ is used in place of $\wedge$ to denote exclusive-or to remove ambiguity.)
+
+\paragraph{2}
+Using the same pre/post conditions from problem 1, we proceed with the modified assignment axiom schema:
+\begin{equation*}
+\derive{}
+{ \hpl{x = a \and y = b}{t = x; x = y; y = t;}{x = b \and y = a} }
+\end{equation*}
+
+Working from the left, we get the following:
+\begin{equation*}
+\derive{ \hpl{x = a \and y = b}{ t = x; }{ t = a \and x = a \and y = b } \and
+\hpl{t = a \and x = a \and y = b}{ x = y ; y = t ; }{ x = b \and  y = a }
+}
+{ \hpl{x = a \and y = b}{t = x; x = y; y = t;}{x = b \and y = a} }
+\end{equation*}
+
+Taking the toprightmost expression, we further refine our derivation:
+\begin{equation*}
+\derive{
+\hpl{t=a \and x=a \and y=b}{x = y;}{t = a \and x = b \and y = t} \and
+\hpl{t = a \and x = b \and y = t}{y = t; }{x = b \and y = a}
+}
+{\hpl{t = a \and x = a \and y = b}{ x = y ; y = t ; }{ x = b \and  y = a }}
+\end{equation*}
+
+And to complete the derivation, we observe that:
+\begin{equation*}
+\derive{\hpl{t = a \and x = b \and y = t}{y = t; }{t = a \and x = b \and y = a}
+\and (t = a \and y = a) \implies y = a
+}
+{\hpl{t = a \and x = b \and y = t}{y = t; }{x = b \and y = a}}
+\end{equation*}
+
+And so the segment correctly implements swap.
+
+\paragraph{3}
+
+To prove the correctness of this segment, we introduce the following loop invariant:
+\begin{equation*}
+\hpl{x = y * q + r \and 0 \leq r}{\text{while }r \geq y \text{ do } r = r - y ; q = q + 1 ; \text{ od}}{x = y q + r \and 0 \leq r \and r < y}
+\end{equation*}
+
+Applying the while axiom
+\begin{equation*}
+\derive{ 
+\derive{
+\derive{}
+{\hpl{x = yq + r\and 0 \leq r \and r \geq y}{r = r - y;}{x = y \and (q + 1) + \and 0 \leq r}}
+\and
+\derive{}
+{\hpl{x = y (q + 1) + r \and 0 \leq r \and r < y}{q = q + 1;}{x = y q + r \and 0 \leq r}}
+}{\hpl{x = y q + r \and 0 \leq r \and r \geq y }{ r = r - y ; q = q + 1 ; }{x = y q + r \and 0 \leq r } } }
+{ \hpl{x = y q + r \and 0 \leq r}{\text{while }r \geq y \text{ do } r = r - y ; q = q + 1 ; \text{ od}}{x = y q + r \and 0 \leq r \and r < y} }
+\end{equation*}
+
+Which we complete using the following:
+\[ \derive{
+(x = yq + r \implies x = y(q-1) + r-y) \and \hpl{x = y(q-1) + (r-y) \and 0 \leq r \and r \geq y}{r = r - y}{x = y(q-1) + r \and 0 \leq r \and r < y}
+}
+{\hpl{x = yq + r\and 0 \leq r \and r \geq y}{r = r - y;}{x = y \and (q + 1) + \and 0 \leq r}}
+\]
+
+To finish the proof, we must check the conditions on the intro fragment:
+\[
+\derive
+{
+	\derive{0 \leq x \and x = r \implies 0 \leq r}
+	{\hpl{0 \leq x \and 0 < y \and r = x}
+	{ r = x ; }
+	{ x = r \and 0 \leq r}}
+	\and
+	\hpl{x = r \and 0 \leq r}
+	{ q = 0; }
+	{ x = yq + r \and 0 \leq r}
+}
+{
+	\hpl{0 \leq x \and 0 < y}
+	{r = x ; q = 0;}
+	{x = yq + r \and 0 \leq r}
+}
+\]
+And so the code correctly implements swap.
+
+
+\end{document}
+
