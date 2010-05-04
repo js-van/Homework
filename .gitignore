@@ -12,4 +12,9 @@
 *.gz
 *.tar
 *.tgz
+*.toc
+*.out
+*.snm
+*.toc
+*.nav
 
