@@ -45,26 +45,42 @@ Must be a Euclidean isometry
 
 Identified with translation + rotation, (ie $SE(d) \cong SO(d) \ltimes \R^d$)
 
-Tangent space is isomorphic to $\mathfrak{so}(d+1)$
+Tangent space is isomorphic to $\mathfrak{so}(d+1)$ ($d+1 \times d+1$ skewsymmetric matrix)
 
-
+Motion of a rigid body given by a curve, $q(t)$, in $SE(d)$.
+	$\dot{q}(t)$ is the tangent curve.
 \end{frame}
 
-\begin{frame}
-\frametitle{Phase Flow in $SE(d)$}
-
-
-\end{frame}
 
 \begin{frame}
 \frametitle{Lagrangian Mechanics}
+Turns physics into an optimization problem.
 
-Rephrases the evolution of a physical system in terms of an optimization problem.
+For each path, $q : \R \to SE(d)$, define a functional
+\[ \mathcal{L}(q) = T(q) - U(q) \]
+Where $T(q)$ is the total kinetic energy along $q$ and $U$ is the potential energy.
 
-\[ \mathcal{L}(q, \dot{q}, t) = T(\dot{q}) - U(q, t) \]
+$\mathcal{L}$ measures the work done along $q$
 
-Where
+\bf{Physical trajectories correspond to paths of minimal work.}
+
 \end{frame}
+
+
+\begin{frame}
+\frametitle{Rigid Motions in 2D}
+For the sake of concreteness, let $d = 2$
+
+Elements of $SE(2)$ are $3 \times 3$ matrices, parameterized by $(\theta, x, y)$:
+\[ (\theta, x, y) = \left ( \begin{array}{ccc}
+\cos(\theta) & \sin(\theta) & x \\
+-\sin(\theta) & \cos(\theta) & y \\
+0 & 0 & 1 \\
+\end{array} \right) \]
+
+
+\end{frame}
+
 
 \end{document}
 
