@@ -378,13 +378,13 @@ Parameterize $R_i = \exp( \mathfrak{r} )$, where $\rr \in \mathfrak{so}(d)$ \vsk
 	\int \limits_{\R^d} 
 		\widehat{\ind{A_i}}(\omega) e^{2 \pi i \inner{\omega}{\exp(\rr) R_j^{-1} t_j - t_i}} 
 		\left(
-			\inner{\overline{\alert<6>{\nabla \widehat{\ind{A_j}}(R \omega)}}  }{ R_j \text{ad}_{\rr_{k,l}} \omega } 
+			-\inner{\overline{\alert<6>{\nabla \widehat{\ind{A_j}}(R \omega)}}  }{ \text{ad}_{\rr_{k,l}} R_j \omega } 
 		\right. \\
 & + & 	\left. 
 			\overline{\widehat{\ind{A_j}}(R_j \exp(-\rr) \omega)} 
-			\alert<5>{2 \pi i \inner{R_j \exp(\text{ad}_\rr) \omega}{t_j} }
+			\alert<5>{2 \pi i \inner{R_j \text{ad}_{\rr_{k,l}} \omega}{  t_j} }
 		\right)
-	d \omega \\
+	d \omega
 \end{eqnarray*}
 \pause
 Get two terms: \pause \alert<5>{a multiplier (easy)}, \pause \alert<6>{a gradient (can be precomputed)}.
