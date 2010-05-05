@@ -8,11 +8,16 @@
 \begin{document}
 
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\ind}[1]{{\bf 1}_{#1}}
 
 \maketitle
 
-\section{Rigid Body Dynamics}
+\begin{frame}
+	\frametitle{Overview}
+		\tableofcontents
+\end{frame}
 
+\section{Rigid Body Dynamics}
 \begin{frame}
 \frametitle{Rigid Body Dynamics}
 An approximate model of low energy physics for stiff objects
@@ -47,15 +52,17 @@ We identify a body $B$ with a scalar field, $\varphi : \R^d \to \R^+$
 \begin{center}
 \includegraphics[height=1.1in]{figures/massfield.png}
 \end{center}
+\pause
 \vskip5pt
 $\varphi$ represents the mass distribution of $B$
+\pause
 \vskip5pt
 $\varphi(x) = 0$ indicates $B$ does not occupy the space at $x$
 \end{frame}
 
 \begin{frame}
 \frametitle{Configuration Space of a Rigid Body}
-Transformations rigid mass fields must preserve distance and handedness
+Transformations of rigid mass fields must preserve distance and handedness
 \pause
 \vskip5pt
 In other words, must be a direct Euclidean isometry
@@ -82,56 +89,236 @@ Isomorphic to finite dimensional Lie group, $SE(d) \cong SO(d) \ltimes \R^d$
 		\end{array} \right)$
 		
 		\vskip15pt
-		$d + {d \choose{2}}$ degrees of freedom
+		${d+1 \choose{2}}$ degrees of freedom
 		
 		\vskip15pt
 		Tangent space: $\mathfrak{so}(d+1)$
 		\end{center}
 \end{columns}
-
+\pause
 \vskip10pt
 \begin{center}
-\bf{Motions of rigid objects $\cong$ paths $q(t) \subset SE(d)$}
+\bf{Motions of rigid objects $\cong$ curves $q(t) \subset SE(d)$}
 \end{center}
-
 \end{frame}
 
-\begin{frame}
-\frametitle{Newton's Equations for Rigid Body Dynamics}
-Q:Given initial conditions, how do we solve for $q$?
-\pause
-\vskip5pt
-A:High-school physics:
-\begin{eqnarray*}
-\frac{dq(t)}{dt} & = & \dot{q}(t) \\
-M \frac{d\dot{q}(t)}{dt} & = & F(t)
-\end{eqnarray*}
-\vskip10pt
 
-$F(t)$ is the force vector and $M$ is the mass matrix for the rigid body:
-\[ M = \int \limits_{\R^d} \varphi(x) dx \]
-\end{frame}
-
-\begin{comment}
-\begin{frame}
-\frametitle{Multiple rigid bodies}
-
-\end{frame}
-
+\section{Lagrangian Mechanics}
 \begin{frame}
 \frametitle{Lagrangian Mechanics}
 Turns physics into an optimization problem.
+\vskip5pt
+\pause
+Given a configuration curve $q$ at time $t$, define the \emph{Lagrangian}
+\[ \mathcal{L}(q, \dot{q}, t) = T(\dot{q}) - U(q, t) \]
+Where $T(\dot{q}) = \frac{1}{2} \dot{q}^T M \dot{q}$ is the kinetic energy and $U$ is a potential
+\vskip15pt
+\pause
+{\bf Hamilton's Principle of Least Action}:
+\begin{center}
+	\emph{Physically plausible motions do minimal work}
+\end{center}
+\vskip10pt
+\pause
+In other words:
+\[ \mathop{\text{argmin}}_{q : [t_0, t_1) \to SE(d)} \int \limits_{t_0}^{t_1} L(q, \dot{q}, t) dt \]
+\end{frame}
 
-For each path, $q : \R \to SE(d)$, define a functional
-\[ \mathcal{L}(q) = T(q) - U(q) \]
-Where $T(q)$ is the total kinetic energy along $q$ and $U$ is the potential energy.
+\begin{frame}
+\frametitle{Forward Kinematics}
+Solve:
+\[ \mathop{\text{argmin}}_{q : [t_0, t_1) \to SE(d)} \int \limits_{t_0}^{t_1} L(q, \dot{q}, t) dt \]
+\pause
+This is a 1st order variational problem, so use Euler-Lagrange:
+\[ \frac{d}{dt} \left ( \frac{\partial L(q, \dot{q}, t)}{\partial \dot{q}} \right) = \frac{\partial L(q, \dot{q}, t)}{\partial q} \]
+\pause
+Unpack definitions and simplify:
+\begin{eqnarray*}
+\frac{d}{dt} \left( \frac{\partial \frac{1}{2} \dot{q}^T M \dot{q} }{\partial \dot{q}} \right) & = & \frac{\partial U(q, t)}{\partial q} \\
+\pause
+M \ddot{q} & = & \nabla U
+\end{eqnarray*}
+Newton's equations!
+\end{frame}
 
-$\mathcal{L}$ measures the work done along $q$
+\begin{frame}
+\frametitle{Multiple Bodies}
+Q: How to deal with multiple independent bodies?
+\pause
+\vskip5pt
+A: Tensor sum
+\vskip15pt
+Let $B_i, B_j$ be independent rigid bodies with motions $q_i, q_j$
+\vskip15pt
+\begin{tabular}{ll}
+Configuration space & $SE(d)^2 \cong SE(d) \oplus SE(d)$ \\
+Motion & $q(t) \cong q_i(t) \oplus q_j(t)$ \\
+Lagrangian & $L(q,\dot{q},t) = L(q_i, \dot{q}_i, t) + L(q_j, \dot{q}_j, t)$ \\
+\end{tabular}
+\pause
+\vskip15pt
+Scales to $n$ bodies, get Lagrangian in $SE(d)^n$
+\end{frame}
 
-\bf{Physical trajectories correspond to paths of minimal work.}
+
+\section{Standard Collisions}
+\begin{frame}
+\frametitle{Collisions}
+Solids can't physically occupy the same space.
+\vskip10pt
+\begin{columns}
+	\column{.5\textwidth}
+		\includegraphics[height=2in]{figures/collision.png}
+		\vskip5pt
+		Need to keep them separated
+		
+	\pause
+	\column{.5\textwidth}
+	
+	{\bf Standard method:}
+	
+	\begin{itemize}
+	\item Time step to point of impact
+	\pause
+	\item Determine contact manifold
+	\pause
+	\item Apply penalty force/impulse to separate objects
+	\pause
+	\item Iterate until all collisions are resolved
+	\end{itemize}
+	\pause
+	\vskip5pt
+	+ Just like high school physics
+	
+\end{columns}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Problems with typical collision methods}
+Handling collisions this way is hard
+\vskip5pt
+\pause
+\begin{itemize}
+\item{-} Finding exact point/time of impact is expensive
+\item{-} Contact manifolds can be difficult to classify
+\item{-} Normal forces are ambiguous for curvy shapes
+\item{-} Impulses are discontinuous; results in stiff system
+\item{-} Penalty methods don't gaurantee separation
+\item{-} Convergence properties not well understood
+\item{-} Unclear how to handle sharp corners
+\item{-} Discontinuity in simulation
+\item{-} Complicated, ad-hoc
+\end{itemize}
+\pause
+But can be made to work with enough hacking...
+\end{frame}
+
+\begin{frame}
+\frametitle{There has got to be an easier way...}
+\pause
+Minimal requirement for physical plausibility
+\vskip7pt
+\begin{center}
+\emph{At all times no two solids intersect}
+\end{center}
+\pause
+\vskip15pt
+Is this really all there is to it?
 
 \end{frame}
 
+\section{Constraint Based Collisions}
+\begin{frame}
+\frametitle{Constraint Based Impacts}
+For any body $B_i$ with mass field $\varphi_i$, define the set:
+\[ A_i = \kappa \text{ supp } \varphi \]
+\pause
+So two solids, $A_i, A_j$, \emph{collide} at a configuration $q_i, q_j$ iff:
+\[ \text{collide}(q_i A_i, q_j A_j) \Leftrightarrow \iota (q_i A_i \cap q_j A_j) \neq \emptyset \]
+\pause
+But,
+\[ \iota ( q_i A_i \cap q_j A_j ) \neq \emptyset \Leftrightarrow \text{vol } q_i A_i \cap q_j A_j > 0 \]
+\pause
+Define
+\[ C_{i,j}(q_i, q_j) \stackrel{def}{\equiv} \text{vol } q_i A_i \cap q_j A_j \]
+And so we replace the impact forces with a system of differentiable holonomic inequality constraints:
+\[ C_{i,j} \leq 0 \]
+\end{frame}
+
+\begin{frame}
+\frametitle{Equations of motion revisited}
+New problem:
+\[ \text{minimize } \int \limits_{t_0}^{t_1} L(q, \dot{q}, t) dt \]
+\[ \text{subject to } C_{i,j}(q_i, q_j) \leq 0 \:\:\: \forall t \in [t_0, t_1), i \neq j \]
+\pause
+Apply KKT conditions + Euler-Lagrange to get complementarity problem:
+\[ \frac{d}{dt} \left( \frac{\partial T(\dot{q}_i)}{\partial \dot{q}_i} \right)
+- \frac{\partial U(q, t)}{\partial q_i} + \alert<3>{\sum \limits_{j \neq i} \mu_{i,j} \frac{ \partial C_{i,j}(q_i, q_j)}{ \partial{q_i} }} = 0 \]
+\[ \alert<3>{0 \leq \mu_{i,j} \perp -C_{i,j} \geq 0} \]
+\pause
+Exactly elastic collision response!
+\vskip5pt
+Slack variables are impulse forces
+\end{frame}
+
+\begin{frame}
+\frametitle{Calculating $C_{i,j}$}
+Need to compute:
+\[ C_{i,j}(q_i, q_j) = \text{vol } q_i A_i \cap q_j A_j \]
+\pause
+Construct the \emph{indicator} on $A$
+\[ \ind{A}(x) = \left \{ \begin{array}{cc}
+1 & \text{if } x \in A \\
+0 & \text{otherwise}
+\end{array} \right. \]
+\pause
+Observe:
+\begin{columns}
+	\column{.5\textwidth}
+		{\centering
+		\[ \ind{A_i \cap A_j}(x) = \ind{A_i}(x) \ind{A_j}(x)  \]
+		}
+	
+	\column{.5\textwidth}
+		{\centering
+		\[ \text{vol } A_i = \int \limits_{\R^d} \ind{A_i}(x) dx \]
+		}
+\end{columns}
+\pause
+So:
+\[ C_{i,j}(q_i, q_j) = \int \limits_{\R^d} \ind{A_i}(q_i^{-1} x) \ind{A_j}(q_j^{-1} x) dx \]
+\end{frame}
+
+\begin{frame}
+\frametitle{Calculating $C_{i,j}$ (cont.)}
+\[ C_{i,j}(q_i, q_j) = \int \limits_{\R^d} \ind{A_i}(q_i^{-1} x) \ind{A_j}(q_j^{-1} x) dx \]
+\pause
+Push terms to one side:
+\[ \int \limits_{\R^d} \ind{A_i}(x) \ind{A_j}(q_j^{-1} q_i x) dx \]
+\pause
+Substitute $q_j^{-1} q_i x \mapsto R(x - y)$ and let $\widetilde{\ind{A_j}}(x) = \ind{A_j}(-x)$:
+\[ \int \limits_{\R^d} \ind{A_i}(x) \widetilde{\ind{A_j}}(R(y - x)) dx \]
+\pause
+So,
+\[ C_{i,j}(q_i, q_j) = (\ind{A_i} \star (\widetilde{\ind{A_j}} \circ R))(y) \]
+\end{frame}
+
+\section{Fourier Methods}
+\begin{frame}
+\frametitle{Fourier Methods}
+Convolution? \invisible<1>{Take a Fourier transform!}
+\[ C_{i,j}(q_i, q_j) = (\ind{A_i} \star (\widetilde{\ind{A_j}} \circ R))(y)
+\pause
+= \mathcal{F}^{-1} \left ( \widehat{\ind{A_i}} \overline{\left(\widehat{\ind{A_j}} \circ R^T \right)} \right ) \]
+
+\end{frame}
+
+\section{Numerical Results}
+
+\section{Further Directions}
+
+\begin{comment}
 \begin{frame}
 \frametitle{Rigid Motions in 2D}
 For the sake of concreteness, let $d = 2$
@@ -144,7 +331,6 @@ Elements of $SE(2)$ are $3 \times 3$ matrices, parameterized by $(\theta, x, y)$
 \end{array} \right) \]
 \end{frame}
 \end{comment}
-
 
 \end{document}
 
