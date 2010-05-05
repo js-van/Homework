@@ -1,6 +1,6 @@
 \documentclass{beamer}
 
-\usepackage{amsfonts,amsmath}
+\usepackage{amsfonts,amsmath,comment,graphicx}
 
 \title{Spectral Rigid Body Dynamics}
 \author{Mikola Lysenko}
@@ -11,46 +11,112 @@
 
 \maketitle
 
-\begin{frame}
-\frametitle{Overview}
-\end{frame}
+\section{Rigid Body Dynamics}
 
 \begin{frame}
 \frametitle{Rigid Body Dynamics}
-Limiting case of continuum dynamics where elastic modulus is infinite.
+An approximate model of low energy physics for stiff objects
 
+\pause
+\vskip15pt
 Pros:
 \begin{itemize}
-\item Pretty accurate at human scales
-\item Good for materials which are stiff
-\item Efficient kinematic constraints (good for mechanism design)
+	\item{+} Pretty accurate at human energy scales
+	\item{+} Good for stiff materials (ie metals, plastics etc.)
+	\item{+} Easy kinematic constraints (useful for mechanisms)
+	\item{+} Standard animation tool (videogames!)
 \end{itemize}
 
+\pause
+\vskip15pt
 Cons:
 \begin{itemize}
-\item Inaccurate at extremely small or large scales
-\item Bad for materials with low elastic modulus
-\item Not always solvable (See: Painleve's paradox)
+	\item{-} Inaccurate at extremely large energies
+	\item{-} Bad for materials with low elastic modulus
+	\item{-} Not always solvable! (See: Painleve's paradox)
 \end{itemize}
+\end{frame}
 
+\begin{frame}
+\frametitle{What is a Rigid Body?}
+An idealized solid object with elastic modulus $= \infty$
+\pause
+\vskip5pt
+We identify a body $B$ with a scalar field, $\varphi : \R^d \to \R^+$
+\vskip5pt
+\begin{center}
+\includegraphics[height=1.1in]{figures/massfield.png}
+\end{center}
+\vskip5pt
+$\varphi$ represents the mass distribution of $B$
+\vskip5pt
+$\varphi(x) = 0$ indicates $B$ does not occupy the space at $x$
 \end{frame}
 
 \begin{frame}
 \frametitle{Configuration Space of a Rigid Body}
-Must be a Euclidean isometry
+Transformations rigid mass fields must preserve distance and handedness
+\pause
+\vskip5pt
+In other words, must be a direct Euclidean isometry
+\vskip5pt
+Isomorphic to finite dimensional Lie group, $SE(d) \cong SO(d) \ltimes \R^d$
+\vskip5pt
+\pause
+\begin{columns}
+	\column{.5\textwidth}
+		\begin{center}
+		\includegraphics[height=1.4in]{figures/rigidbody.png}
+		\end{center}
+		
+	\column{.5\textwidth}
+		\begin{center}
+		Can be parameterized by a translation $t$ and a rotation $R$
+		
+		\vskip15pt
+		
+		Matrix:
+		$\left( \begin{array}{cc}
+			R & t \\
+			0 & 1 \\
+		\end{array} \right)$
+		
+		\vskip15pt
+		$d + {d \choose{2}}$ degrees of freedom
+		
+		\vskip15pt
+		Tangent space: $\mathfrak{so}(d+1)$
+		\end{center}
+\end{columns}
 
+\vskip10pt
 \begin{center}
-\includegraphics[height=1.4in]{figures/rigid_body.png}
+\bf{Motions of rigid objects $\cong$ paths $q(t) \subset SE(d)$}
 \end{center}
 
-Identified with translation + rotation, (ie $SE(d) \cong SO(d) \ltimes \R^d$)
-
-Tangent space is isomorphic to $\mathfrak{so}(d+1)$ ($d+1 \times d+1$ skewsymmetric matrix)
-
-Motion of a rigid body given by a curve, $q(t)$, in $SE(d)$.
-	$\dot{q}(t)$ is the tangent curve.
 \end{frame}
 
+\begin{frame}
+\frametitle{Newton's Equations for Rigid Body Dynamics}
+Q:Given initial conditions, how do we solve for $q$?
+\pause
+\vskip5pt
+A:High-school physics:
+\begin{eqnarray*}
+\frac{dq(t)}{dt} & = & \dot{q}(t) \\
+M \frac{d\dot{q}(t)}{dt} & = & F(t)
+\end{eqnarray*}
+\vskip10pt
+
+$F(t)$ is the force vector and $M$ is the mass matrix for the rigid body:
+\[ M = \int \limits_{\R^d} \varphi(x) dx \]
+\end{frame}
+
+\begin{comment}
+\begin{frame}
+\frametitle{Multiple rigid bodies}
+
+\end{frame}
 
 \begin{frame}
 \frametitle{Lagrangian Mechanics}
@@ -66,7 +132,6 @@ $\mathcal{L}$ measures the work done along $q$
 
 \end{frame}
 
-
 \begin{frame}
 \frametitle{Rigid Motions in 2D}
 For the sake of concreteness, let $d = 2$
@@ -77,9 +142,8 @@ Elements of $SE(2)$ are $3 \times 3$ matrices, parameterized by $(\theta, x, y)$
 -\sin(\theta) & \cos(\theta) & y \\
 0 & 0 & 1 \\
 \end{array} \right) \]
-
-
 \end{frame}
+\end{comment}
 
 
 \end{document}
