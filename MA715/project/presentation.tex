@@ -9,6 +9,8 @@
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\ind}[1]{{\bf 1}_{#1}}
+\newcommand{\inner}[2]{\left \langle #1 , #2 \right \rangle}
+%\newcommand{\exp}{\mathop{\text{exp}}}
 
 \maketitle
 
@@ -232,7 +234,7 @@ Is this really all there is to it?
 \begin{frame}
 \frametitle{Constraint Based Impacts}
 For any body $B_i$ with mass field $\varphi_i$, define the set:
-\[ A_i = \kappa \text{ supp } \varphi \]
+\[ A_i = \kappa \iota \text{ supp } \varphi \]
 \pause
 So two solids, $A_i, A_j$, \emph{collide} at a configuration $q_i, q_j$ iff:
 \[ \text{collide}(q_i A_i, q_j A_j) \Leftrightarrow \iota (q_i A_i \cap q_j A_j) \neq \emptyset \]
@@ -310,13 +312,90 @@ So,
 Convolution? \invisible<1>{Take a Fourier transform!}
 \[ C_{i,j}(q_i, q_j) = (\ind{A_i} \star (\widetilde{\ind{A_j}} \circ R))(y)
 \pause
-= \mathcal{F}^{-1} \left ( \widehat{\ind{A_i}} \overline{\left(\widehat{\ind{A_j}} \circ R^T \right)} \right ) \]
-
+= \mathcal{F}^{-1} \left ( \widehat{\ind{A_i}} \overline{\left(\widehat{\ind{A_j}} \circ R \right)} \right )(y) \]
+\pause
+What about gradients? (ie $\frac{\partial C_{i,j}(q_i, q_j)}{\partial q_i}$)
+\pause
+\vskip5pt
+\vskip5pt
+\begin{columns}
+	\column{.5\textwidth}
+		{\centering
+		Fix parameters $q_i = (R_i, t_i)$, 
+		\[q_i x = R_i x + t_i \]
+		\[q_i^{-1} = (R_i^{-1}, -R_i^{-1} t_i) \]
+		\[q_j q_i^{-1} x = R(x - y)\]
+		}
+	\column{.5\textwidth}
+		\pause
+		{\centering
+		Solve for $R, y$,
+		\[ R = R_j R_i^{-1} \]
+		\[ y = R_i R_j^{-1} t_j - t_i \]
+		}
+\end{columns}
+\pause
+Need to compute $\frac{\partial C_{i,j}(R_i, t_i, R_j, t_j)}{\partial R_i}$, $\frac{\partial C_{i,j}(R_i, t_i, R_j, t_j)}{\partial t_i}$
 \end{frame}
 
-\section{Numerical Results}
+\begin{frame}
+\frametitle{Translational Gradient}
+Start with the translational case first.
+\vskip5pt
+Let $t_i^k$ denote the $k^{th}$ component of $t_i$\pause, then
+\begin{eqnarray*}
+\frac{ \partial C_{i,j} }{ \partial t_i^k }
+& = & \frac{ \partial }{ \partial t_i^j } \left( \:\: \int \limits_{\R^d} \widehat{\ind{A_i}}(\omega) \overline{\widehat{\ind{A_j}}(R_j R_i^{-1} \omega)} e^{2 \pi i \inner{\omega}{R_i R_j^{-1} t_j - t_i}} d \omega  \right ) \\
+\pause & = & \int \limits_{\R^d} 
+\alert<4>{2 \pi i \inner{\omega}{v^k}}
+\widehat{\ind{A_i}}(\omega) \overline{\widehat{\ind{A_j}}(R_j R_i^{-1} \omega)} e^{2 \pi i \inner{\omega}{R_i R_j^{-1} t_j - t_i} } d \omega
+\end{eqnarray*}
+Where $v^k$ denotes the $k^{th}$ basis vector
+\pause
+\vskip5pt
+Conclusion: Translational gradient is just a multiplier
+\end{frame}
 
-\section{Further Directions}
+\begin{frame}
+\frametitle{Rotational Gradient}
+\newcommand{\rr}{\mathfrak{r}}
+Parameterize $R_i = \exp( \mathfrak{r} )$, where $\rr \in \mathfrak{so}(d)$ \vskip2pt
+\hskip5pt{\small In otherwords $d \times d$ skew symmetric matrices, $\rr_{k,l} = -\rr_{l,k}$}
+\pause
+\begin{eqnarray*}
+\frac{\partial C_{i,j}}{\partial \rr_{k,l}}  
+& = &
+ \frac{ \partial }{ \partial \rr_{k,l} } \left( \:\: 
+	\int \limits_{\R^d} 
+		\widehat{\ind{A_i}}(\omega) 
+		\overline{\widehat{\ind{A_j}}(R_j \exp(-\rr) \omega)} 
+		e^{2 \pi i \inner{\omega}{\exp(\rr) R_j^{-1} t_j - t_i}} 
+	d \omega  
+\right )\\
+\pause
+...
+& = &
+	\int \limits_{\R^d} 
+		\widehat{\ind{A_i}}(\omega) e^{2 \pi i \inner{\omega}{\exp(\rr) R_j^{-1} t_j - t_i}} 
+		\left(
+			\inner{\overline{\alert<6>{\nabla \widehat{\ind{A_j}}(R \omega)}}  }{ R_j \text{ad}_{\rr_{k,l}} \omega } 
+		\right. \\
+& + & 	\left. 
+			\overline{\widehat{\ind{A_j}}(R_j \exp(-\rr) \omega)} 
+			\alert<5>{2 \pi i \inner{R_j \exp(\text{ad}_\rr) \omega}{t_j} }
+		\right)
+	d \omega \\
+\end{eqnarray*}
+\pause
+Get two terms: \pause \alert<5>{a multiplier (easy)}, \pause \alert<6>{a gradient (can be precomputed)}.
+\pause
+\vskip10pt
+Computationally not too bad, but still pretty messy in $d$-dimensional space.
+\end{frame}
+
+%\section{Numerical Results}
+
+%\section{Further Directions}
 
 \begin{comment}
 \begin{frame}
