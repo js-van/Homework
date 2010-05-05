@@ -299,20 +299,21 @@ So:
 Push terms to one side:
 \[ \int \limits_{\R^d} \ind{A_i}(x) \ind{A_j}(q_j^{-1} q_i x) dx \]
 \pause
-Substitute $q_j^{-1} q_i x \mapsto R(x - y)$ and let $\widetilde{\ind{A_j}}(x) = \ind{A_j}(-x)$:
-\[ \int \limits_{\R^d} \ind{A_i}(x) \widetilde{\ind{A_j}}(R(y - x)) dx \]
+Substitute $q_j^{-1} q_i x \mapsto Rx - y$ and let $\widetilde{\ind{A_j}}(x) = \ind{A_j}(-x)$:
+\[ \int \limits_{\R^d} \ind{A_i}(x) \widetilde{\ind{A_j}}(y - Rx) dx = 
+\int \limits_{\R^d} \ind{A_i}(R^{-1} x) \widetilde{\ind{A_j}}(y - x) dx\]
 \pause
 So,
-\[ C_{i,j}(q_i, q_j) = (\ind{A_i} \star (\widetilde{\ind{A_j}} \circ R))(y) \]
+\[ C_{i,j}(q_i, q_j) = ((\ind{A_i} \circ R^{-1}) \star \widetilde{\ind{A_j}})(y) \]
 \end{frame}
 
 \section{Fourier Methods}
 \begin{frame}
 \frametitle{Fourier Methods}
 Convolution? \invisible<1>{Take a Fourier transform!}
-\[ C_{i,j}(q_i, q_j) = (\ind{A_i} \star (\widetilde{\ind{A_j}} \circ R))(y)
+\[ C_{i,j}(q_i, q_j) = ((\ind{A_i} \circ R^{-1}) \star \widetilde{\ind{A_j}})(y)
 \pause
-= \mathcal{F}^{-1} \left ( \widehat{\ind{A_i}} \overline{\left(\widehat{\ind{A_j}} \circ R \right)} \right )(y) \]
+= \mathcal{F}^{-1} \left ( (\widehat{\ind{A_i}} \circ R^{-1}) \overline{\widehat{\ind{A_j}}} \right )(y) \]
 \pause
 What about gradients? (ie $\frac{\partial C_{i,j}(q_i, q_j)}{\partial q_i}$)
 \pause
@@ -324,31 +325,33 @@ What about gradients? (ie $\frac{\partial C_{i,j}(q_i, q_j)}{\partial q_i}$)
 		Fix parameters $q_i = (R_i, t_i)$, 
 		\[q_i x = R_i x + t_i \]
 		\[q_i^{-1} = (R_i^{-1}, -R_i^{-1} t_i) \]
-		\[q_j q_i^{-1} x = R(x - y)\]
+		\[q_j q_i^{-1} x = Rx - y\]
 		}
 	\column{.5\textwidth}
 		\pause
 		{\centering
 		Solve for $R, y$,
 		\[ R = R_j R_i^{-1} \]
-		\[ y = R_i R_j^{-1} t_j - t_i \]
+		\[ y = t_j - R_j R_i^{-1} t_i \]
 		}
 \end{columns}
 \pause
 Need to compute $\frac{\partial C_{i,j}(R_i, t_i, R_j, t_j)}{\partial R_i}$, $\frac{\partial C_{i,j}(R_i, t_i, R_j, t_j)}{\partial t_i}$
+\vskip5pt
+Or by symmetry: $C_{i,j}(q_i, q_j) = C_{j,i}(q_j, q_i)$
 \end{frame}
 
 \begin{frame}
 \frametitle{Translational Gradient}
 Start with the translational case first.
 \vskip5pt
-Let $t_i^k$ denote the $k^{th}$ component of $t_i$\pause, then
+Let $t_j^k$ denote the $k^{th}$ component of $t_j$,\pause then
 \begin{eqnarray*}
-\frac{ \partial C_{i,j} }{ \partial t_i^k }
-& = & \frac{ \partial }{ \partial t_i^j } \left( \:\: \int \limits_{\R^d} \widehat{\ind{A_i}}(\omega) \overline{\widehat{\ind{A_j}}(R_j R_i^{-1} \omega)} e^{2 \pi i \inner{\omega}{R_i R_j^{-1} t_j - t_i}} d \omega  \right ) \\
+\frac{ \partial C_{i,j} }{ \partial t_j^k }
+& = & \frac{ \partial }{ \partial t_i^j } \left( \:\: \int \limits_{\R^d} \widehat{\ind{A_i}}(R_i R_j^{-1} \omega) \overline{\widehat{\ind{A_j}}(\omega)} e^{2 \pi i \inner{\omega}{t_j - R_j R_i^{-1} t_i}} d \omega  \right ) \\
 \pause & = & \int \limits_{\R^d} 
 \alert<4>{2 \pi i \inner{\omega}{v^k}}
-\widehat{\ind{A_i}}(\omega) \overline{\widehat{\ind{A_j}}(R_j R_i^{-1} \omega)} e^{2 \pi i \inner{\omega}{R_i R_j^{-1} t_j - t_i} } d \omega
+\widehat{\ind{A_i}}(R_i R_j^{-1} \omega) \overline{\widehat{\ind{A_j}}(\omega)} e^{2 \pi i \inner{\omega}{t_j - R_j R_i^{-1} t_i} } d \omega
 \end{eqnarray*}
 Where $v^k$ denotes the $k^{th}$ basis vector
 \pause
@@ -359,7 +362,7 @@ Conclusion: Translational gradient is just a multiplier
 \begin{frame}
 \frametitle{Rotational Gradient}
 \newcommand{\rr}{\mathfrak{r}}
-Parameterize $R_i = \exp( \mathfrak{r} )$, where $\rr \in \mathfrak{so}(d)$ \vskip2pt
+Parameterize $R_j = \exp( \mathfrak{r} )$, where $\rr \in \mathfrak{so}(d)$ \vskip2pt
 \hskip5pt{\small In otherwords $d \times d$ skew symmetric matrices, $\rr_{k,l} = -\rr_{l,k}$}
 \pause
 \begin{eqnarray*}
@@ -367,22 +370,22 @@ Parameterize $R_i = \exp( \mathfrak{r} )$, where $\rr \in \mathfrak{so}(d)$ \vsk
 & = &
  \frac{ \partial }{ \partial \rr_{k,l} } \left( \:\: 
 	\int \limits_{\R^d} 
-		\widehat{\ind{A_i}}(\omega) 
-		\overline{\widehat{\ind{A_j}}(R_j \exp(-\rr) \omega)} 
-		e^{2 \pi i \inner{\omega}{\exp(\rr) R_j^{-1} t_j - t_i}} 
+		\widehat{\ind{A_i}}(R_i \exp(-\rr) \omega) 
+		\overline{\widehat{\ind{A_j}}(\omega)} 
+		e^{2 \pi i \inner{\omega}{t_j - \exp(\rr) R_i^{-1} t_i}} 
 	d \omega  
 \right )\\
 \pause
 ...
 & = &
 	\int \limits_{\R^d} 
-		\widehat{\ind{A_i}}(\omega) e^{2 \pi i \inner{\omega}{\exp(\rr) R_j^{-1} t_j - t_i}} 
+		\widehat{\ind{A_i}}(\omega) e^{2 \pi i \inner{\omega}{y}} 
 		\left(
-			-\inner{\overline{\alert<6>{\nabla \widehat{\ind{A_j}}(R \omega)}}  }{ \text{ad}_{\rr_{k,l}} R_j \omega } 
+			-\inner{\overline{\alert<6>{\nabla \widehat{\ind{A_j}}(R \omega)}}  }{  R \rr_{k,l} \omega } 
 		\right. \\
 & + & 	\left. 
-			\overline{\widehat{\ind{A_j}}(R_j \exp(-\rr) \omega)} 
-			\alert<5>{2 \pi i \inner{R_j \text{ad}_{\rr_{k,l}} \omega}{  t_j} }
+			\overline{\widehat{\ind{A_j}}(R \omega)} 
+			\alert<5>{2 \pi i \inner{R \rr_{k,l} \omega}{  t_j} }
 		\right)
 	d \omega
 \end{eqnarray*}
