@@ -336,7 +336,7 @@ What about gradients? (ie $\frac{\partial C_{i,j}(q_i, q_j)}{\partial q_i}$)
 		}
 \end{columns}
 \pause
-Need to compute $\frac{\partial C_{i,j}(R, y)}{\partial y}$, $\frac{\partial C_{i,j}(R, y)}{\partial R}$
+Need to compute $\frac{\partial C_{i,j}(R, y)}{\partial y}$, $\frac{\partial C_{i,j}(R, y)}{\partial R}$ then use chain rule
 \vskip5pt
 Or by symmetry: $C_{i,j}(q_i, q_j) = C_{j,i}(q_j, q_i)$
 \end{frame}
@@ -381,33 +381,174 @@ Parameterize $R = \exp( \mathfrak{r} )$, where $\rr \in \mathfrak{so}(d)$ with b
 ...
 & = &
 	\int \limits_{\R^d} 
-		-\inner{ \alert<5>{\nabla \widehat{\ind{A_i}}(R^{-1} \omega)} }{ R^{-1} \rr_{k,l} \omega } \overline{\widehat{\ind{A_j}}(\omega)} e^{2 \pi i \inner{\omega}{y}} d \omega
+		-\inner{ \alert<4>{\nabla \widehat{\ind{A_i}}(R^{-1} \omega)} }{ R^{-1} \rr_{k,l} \omega } \overline{\widehat{\ind{A_j}}(\omega)} e^{2 \pi i \inner{\omega}{y}} d \omega
 \end{eqnarray*}
 \pause
-Unfortunately not a Fourier multiplier.
+Not a Fourier multiplier.
+\vskip5pt
+\pause
+But can be precalculated with $O(d)$ overhead:
+\vskip5pt
+\[ \frac{\partial}{\partial \omega^k} \widehat{\ind{A_i}}(\omega) = \mathcal{F}\left( -2 \pi i \inner{x}{v^k} \ind{A_i}\right)(\omega) \]
+\end{frame}
+
+\begin{frame}
+\frametitle{Performance}
+Fourier transform is neat, but what does it get us?
 \vskip10pt
 \pause
-Can be precalculated with $O(d)$ overhead.
+Full inverse Fourier transform complexity = brute force volume
+\vskip2pt
+\hskip10pt {\small Though the derivative formulas are cute...}
+\vskip2pt
+\hskip10pt {\small And we do get slightly better cache coherency...}
+\vskip10pt
+\pause
+But do we really need the whole spectrum?
+\pause
+\vskip15pt
+\begin{center}
+\alert{\bf {\Huge NO!}}
+\end{center}
+\pause
+\vskip15pt
+Since Fourier series exhibit exponential convergence for suitably regular functions, only need about $O(-log(h))$ terms to get $O(h)$ accuracy (in the $L^1$ norm).
+\vskip10pt
+\pause
+Dramatically reduces space and time complexity
 \end{frame}
 
-
-\section{Numerical Results}
-
-%\section{Further Directions}
-
-\begin{comment}
 \begin{frame}
-\frametitle{Rigid Motions in 2D}
-For the sake of concreteness, let $d = 2$
-
-Elements of $SE(2)$ are $3 \times 3$ matrices, parameterized by $(\theta, x, y)$:
-\[ (\theta, x, y) = \left ( \begin{array}{ccc}
-\cos(\theta) & \sin(\theta) & x \\
--\sin(\theta) & \cos(\theta) & y \\
-0 & 0 & 1 \\
-\end{array} \right) \]
+\frametitle{Convergence}
+Rate of convergence, number of Fourier terms vs. $L^1$ error, (log-log plot)
+\begin{center}
+\includegraphics[height=2.5in]{figures/trunc_errors.png}
+\end{center}
 \end{frame}
-\end{comment}
+
+\begin{frame}
+\frametitle{Convergence}
+Qualitative effects of cutoff (full spectrum has 22185 terms)
+\begin{center}
+\begin{tabular}{ccc}
+\includegraphics[height=1in]{figures/trunc_exact.png} &
+\includegraphics[height=1in]{figures/trunc_16.png} &
+\includegraphics[height=1in]{figures/trunc_32.png} \\
+Exact &
+16 &
+32 \\
+\includegraphics[height=1in]{figures/trunc_64.png} &
+\includegraphics[height=1in]{figures/trunc_256.png} &
+\includegraphics[height=1in]{figures/trunc_1024.png} \\
+64 &
+256 &
+1024 \\
+\end{tabular}
+\end{center}
+\end{frame}
+
+\section{Numerical Issues}
+\begin{frame}
+\frametitle{Truncated Spectra}
+Henceforth $d = 2$
+\vskip5pt
+Want: An efficient way to represent truncated spectrum
+\vskip2pt
+\hskip10pt Need to deal with rotations too
+\vskip5pt
+Obvious answer: Polar coordinates
+\vskip5pt
+Pick $\omega_r = \sqrt{\omega_x^2 + \omega_y^2}$, $\omega_\theta = \tan^{-1} \frac{y}{x}$
+\[ \widehat{f}(\omega_x, \omega_y) \mapsto \widehat{f}^p(\omega_r, \omega_\theta) \]
+\pause
+Rotation $\mapsto$ Cyclic shift in $\theta$
+
+Differentiation formulas still work, just do change of variables
+
+Seems easy, right?
+\pause
+\begin{center}
+\includegraphics[width=.5in]{figures/trollface.png} \emph{Problem?}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Discrete Cartesian to Polar Conversion}
+Can't do this exactly!
+\begin{center}
+\includegraphics[height=1.7in]{figures/polar_chirik.png}
+
+{\tiny Figure from Chirikjian 2003}
+\pause
+\end{center}
+\begin{columns}
+	\column{.9\textwidth}
+		Reason: \emph{Only nontrivial discrete subgroups of $SE(2)$ are 17 plane tiling groups!} 
+	\column{.1\textwidth}	
+		\includegraphics[height=.5in]{figures/fffuuuu.png}
+\end{columns}
+\pause
+{\small So unless you are happy with a hexagonal grid with 6 rotational samples, forget about doing this losslessly! }
+\end{frame}
+
+\begin{frame}
+\frametitle{Bresenham Interpolation}
+Approximation is a fact of life -- deal with it
+\vskip2pt
+\hskip10pt {\small Might as well do it fast}
+\vskip2pt
+\pause
+Idea: Do circle drawing in reverse, use Bresenham's algorithm
+\begin{columns}
+
+	\column{.4\textwidth}
+		\begin{center}
+		\includegraphics[height=1.4in]{figures/wiki_bresenham.png}
+
+		{\tiny Figure from Wikipedia, 2010}
+		\end{center}
+		
+	\column{.6\textwidth}
+		\pause
+		\begin{itemize}
+			\item Sample $r$ at uniform increments
+			\item For each $r$, trace a circle centered at the origin
+			\item Store $8r + 4$ radial samples in array
+			\item Interpolate to uniform radial samples
+			\item Append to store
+		\end{itemize}
+\end{columns}
+\pause
+Minimal storage, uses only integer arithmetic \includegraphics[height=.5in]{figures/everything_went_better_than_expected.jpg}
+\end{frame}
+
+\begin{frame}
+\frametitle{Gibbs Phenomenon}
+Truncating Fourier series causes ringing artifacts at boundaries
+\vskip2pt
+\hskip10pt {\small Intuitively, same as low pass filtering high curvature}
+\begin{center}
+\includegraphics[height=1.2in]{figures/wiki_gibbs.png}
+
+{\tiny Figure from Wikipedia, 2010}
+\end{center}
+\pause
+But we don't care, just need separation between interior and exterior.
+\vskip5pt
+So pick some cutoff threshold; values above are in, below are out
+\end{frame}
+
+\begin{frame}
+\frametitle{Optimal Thresholding}
+Given a region $R \subset \R^d$ and set $A \subseteq R$ approximated by $f$, define quality, $Q_T$, of threshold $T$
+\[ Q_T = \text{vol } \{ x \in R | f(x) > T \Leftrightarrow x \in A \} \]
+\emph{Intuitively, number of points where threshold gives the right answer}
+\vskip5pt
+Very very hard to estimate $T$ analytically
+\pause
+\vskip5pt
+But in practice can compute $T$ combinatorially given $f, A, R$
+\end{frame}
 
 \end{document}
 
