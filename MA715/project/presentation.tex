@@ -336,7 +336,7 @@ What about gradients? (ie $\frac{\partial C_{i,j}(q_i, q_j)}{\partial q_i}$)
 		}
 \end{columns}
 \pause
-Need to compute $\frac{\partial C_{i,j}(R_i, t_i, R_j, t_j)}{\partial R_i}$, $\frac{\partial C_{i,j}(R_i, t_i, R_j, t_j)}{\partial t_i}$
+Need to compute $\frac{\partial C_{i,j}(R, y)}{\partial y}$, $\frac{\partial C_{i,j}(R, y)}{\partial R}$
 \vskip5pt
 Or by symmetry: $C_{i,j}(q_i, q_j) = C_{j,i}(q_j, q_i)$
 \end{frame}
@@ -345,13 +345,15 @@ Or by symmetry: $C_{i,j}(q_i, q_j) = C_{j,i}(q_j, q_i)$
 \frametitle{Translational Gradient}
 Start with the translational case first.
 \vskip5pt
-Let $t_j^k$ denote the $k^{th}$ component of $t_j$,\pause then
+Let $y^k$ denote the $k^{th}$ component of $y$,\pause then
 \begin{eqnarray*}
-\frac{ \partial C_{i,j} }{ \partial t_j^k }
-& = & \frac{ \partial }{ \partial t_i^j } \left( \:\: \int \limits_{\R^d} \widehat{\ind{A_i}}(R_i R_j^{-1} \omega) \overline{\widehat{\ind{A_j}}(\omega)} e^{2 \pi i \inner{\omega}{t_j - R_j R_i^{-1} t_i}} d \omega  \right ) \\
-\pause & = & \int \limits_{\R^d} 
+\frac{ \partial C_{i,j} }{ \partial y^k }
+& = & \frac{ \partial }{ \partial y^k } \left( \:\: \int \limits_{\R^d} \widehat{\ind{A_i}}(R^{-1} \omega) \overline{\widehat{\ind{A_j}}(\omega)} e^{2 \pi i \inner{\omega}{y}} d \omega  \right ) \\
+\pause 
+...
+& = & \int \limits_{\R^d} 
 \alert<4>{2 \pi i \inner{\omega}{v^k}}
-\widehat{\ind{A_i}}(R_i R_j^{-1} \omega) \overline{\widehat{\ind{A_j}}(\omega)} e^{2 \pi i \inner{\omega}{t_j - R_j R_i^{-1} t_i} } d \omega
+\widehat{\ind{A_i}}(R^{-1} \omega) \overline{\widehat{\ind{A_j}}(\omega)} e^{2 \pi i \inner{\omega}{y} } d \omega
 \end{eqnarray*}
 Where $v^k$ denotes the $k^{th}$ basis vector
 \pause
@@ -362,41 +364,34 @@ Conclusion: Translational gradient is just a multiplier
 \begin{frame}
 \frametitle{Rotational Gradient}
 \newcommand{\rr}{\mathfrak{r}}
-Parameterize $R_j = \exp( \mathfrak{r} )$, where $\rr \in \mathfrak{so}(d)$ \vskip2pt
-\hskip5pt{\small In otherwords $d \times d$ skew symmetric matrices, $\rr_{k,l} = -\rr_{l,k}$}
+Parameterize $R = \exp( \mathfrak{r} )$, where $\rr \in \mathfrak{so}(d)$ with basis $\rr_{k,l}$ \vskip2pt
+\hskip5pt{\small In otherwords $d \times d$ skew symmetric matrices, $\rr^T = -\rr$}
 \pause
 \begin{eqnarray*}
 \frac{\partial C_{i,j}}{\partial \rr_{k,l}}  
 & = &
  \frac{ \partial }{ \partial \rr_{k,l} } \left( \:\: 
 	\int \limits_{\R^d} 
-		\widehat{\ind{A_i}}(R_i \exp(-\rr) \omega) 
+		\widehat{\ind{A_i}}(\exp(-\rr) \omega) 
 		\overline{\widehat{\ind{A_j}}(\omega)} 
-		e^{2 \pi i \inner{\omega}{t_j - \exp(\rr) R_i^{-1} t_i}} 
-	d \omega  
+		e^{2 \pi i \inner{\omega}{y}} 
+	d \omega
 \right )\\
 \pause
 ...
 & = &
 	\int \limits_{\R^d} 
-		\widehat{\ind{A_i}}(\omega) e^{2 \pi i \inner{\omega}{y}} 
-		\left(
-			-\inner{\overline{\alert<6>{\nabla \widehat{\ind{A_j}}(R \omega)}}  }{  R \rr_{k,l} \omega } 
-		\right. \\
-& + & 	\left. 
-			\overline{\widehat{\ind{A_j}}(R \omega)} 
-			\alert<5>{2 \pi i \inner{R \rr_{k,l} \omega}{  t_j} }
-		\right)
-	d \omega
+		-\inner{ \alert<5>{\nabla \widehat{\ind{A_i}}(R^{-1} \omega)} }{ R^{-1} \rr_{k,l} \omega } \overline{\widehat{\ind{A_j}}(\omega)} e^{2 \pi i \inner{\omega}{y}} d \omega
 \end{eqnarray*}
 \pause
-Get two terms: \pause \alert<5>{a multiplier (easy)}, \pause \alert<6>{a gradient (can be precomputed)}.
-\pause
+Unfortunately not a Fourier multiplier.
 \vskip10pt
-Computationally not too bad, but still pretty messy in $d$-dimensional space.
+\pause
+Can be precalculated with $O(d)$ overhead.
 \end{frame}
 
-%\section{Numerical Results}
+
+\section{Numerical Results}
 
 %\section{Further Directions}
 
