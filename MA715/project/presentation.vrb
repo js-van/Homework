@@ -1,0 +1,18 @@
+\frametitle {Optimal Thresholding Algorithm}
+\begin{lstlisting}
+v = []
+for x in R:
+    v.append( (f(x), A(x)) )
+v.sort()
+
+fv, Av = unzip(v)
+Q = foldl(Av, +, 0) + foldr(Av, +, 0)
+
+return max(zip(Q, fv)).second
+\end{lstlisting}
+
+\vskip10pt
+Greedy/DP method
+
+\vskip10pt
+Takes $O(n \log(n))$ time, uses $O(n)$ space

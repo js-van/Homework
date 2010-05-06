@@ -1,11 +1,23 @@
 \documentclass{beamer}
 
-\usepackage{amsfonts,amsmath,comment,graphicx}
+\usepackage{amsfonts,amsmath,comment,graphicx,listings}
 
 \title{Spectral Rigid Body Dynamics}
 \author{Mikola Lysenko}
 
 \begin{document}
+
+\lstset{ %
+language=Python,                % choose the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,	                % adds a frame around the code
+tabsize=4,	                % sets default tabsize to 2 spaces
+captionpos=b,                   % sets the caption-position to bottom
+breaklines=true,                % sets automatic line breaking
+breakatwhitespace=false}
 
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\ind}[1]{{\bf 1}_{#1}}
@@ -543,11 +555,145 @@ So pick some cutoff threshold; values above are in, below are out
 Given a region $R \subset \R^d$ and set $A \subseteq R$ approximated by $f$, define quality, $Q_T$, of threshold $T$
 \[ Q_T = \text{vol } \{ x \in R | f(x) > T \Leftrightarrow x \in A \} \]
 \emph{Intuitively, number of points where threshold gives the right answer}
-\vskip5pt
-Very very hard to estimate $T$ analytically
+
+Want to find optimal $T$
+\[ T = \mathop{\text{argmax}}_{T' \in \R} Q_{T'} \]
+Seems hard to estimate $T$ analytically
 \pause
 \vskip5pt
 But in practice can compute $T$ combinatorially given $f, A, R$
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Optimal Thresholding Algorithm}
+\begin{lstlisting}
+v = []
+for x in R:
+    v.append( (f(x), A(x)) )
+v.sort()
+
+fv, Av = unzip(v)
+Q = foldl(Av, +, 0) + foldr(Av, +, 0)
+
+return max(zip(Q, fv)).second
+\end{lstlisting}
+
+\vskip10pt
+Greedy/DP method
+
+\vskip10pt
+Takes $O(n \log(n))$ time, uses $O(n)$ space
+\end{frame}
+
+\begin{frame}
+\frametitle{Thresholding Results}
+\begin{center}
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+Exact Indicator & 
+Fourier Truncation & 
+Optimal Cutoff \\
+\hline
+\includegraphics[height=.5in]{figures/fig_ind0.png} & 
+\includegraphics[height=.5in]{figures/fig_ift0.png} & 
+\includegraphics[height=.5in]{figures/fig_cut0.png} \\
+\hline
+\includegraphics[height=.5in]{figures/fig_ind1.png} & 
+\includegraphics[height=.5in]{figures/fig_ift1.png} & 
+\includegraphics[height=.5in]{figures/fig_cut1.png} \\
+\hline
+\includegraphics[height=.5in]{figures/fig_ind2.png} & 
+\includegraphics[height=.5in]{figures/fig_ift2.png} & 
+\includegraphics[height=.5in]{figures/fig_cut2.png} \\
+\hline
+\includegraphics[height=.5in]{figures/fig_ind3.png} & 
+\includegraphics[height=.5in]{figures/fig_ift3.png} & 
+\includegraphics[height=.5in]{figures/fig_cut3.png} \\
+\hline
+\includegraphics[height=.5in]{figures/fig_ind4.png} & 
+\includegraphics[height=.5in]{figures/fig_ift4.png} & 
+\includegraphics[height=.5in]{figures/fig_cut4.png} \\
+\hline
+\end{tabular}
+
+Radius 14 cutoff, 777 terms
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Putting it together}
+Let $\hat{f_A}$ be the approximate Fourier series for $\ind{A}$
+\vskip5pt
+Then:
+\begin{eqnarray*}
+C_{i,j}(\rho, \theta, \phi) & = & -T +
+	\sum \limits_{r=2}^{N_R}
+		 \sum \limits_{t = 1}^{8 r + 4} 
+			\widehat{f_{A_i}} \left( r, \phi \frac{d t}{d \theta} + t \right) 
+			\overline{\widehat{f_{A_j}}} \left( r, t \right) \\
+& ... &	 	\exp \left( 
+				\frac{2 \pi i}{N} \rho r 
+				\cos \left( 
+						t \frac{d \theta}{dt} + \theta 
+				\right) 
+			\right)
+			r \frac{d t}{d \theta}
+\end{eqnarray*}
+Where:
+\begin{columns}
+	\column{.5\textwidth}
+		\[ q_j q_i^{-1} = (R, y) \]
+		\[ y = \rho( \cos(\theta) v^x + \sin(\theta) v^y) \]
+		\[ R = \exp(\phi \mathfrak{r}_{0,1}) \]
+		
+	\column{.5\textwidth}
+		\[ dt = 8r + 4 \]
+		\[ d\theta = 2 \pi \]
+\end{columns}
+\pause
+\vskip5pt
+\emph{Protip: Can early out using the rearrangement inequality}
+\end{frame}
+
+\begin{frame}
+\frametitle{Prototype Physics Code}
+
+Basic implementation so far, just uses implicit Euler.
+
+\hskip10pt Doesn't solve for $\mu$ correctly (currently is constant)
+
+\vskip15pt
+\begin{columns}
+
+	\column{.5\textwidth}
+		Insert image
+		
+	\column{.5\textwidth}
+		Features:
+		\begin{itemize}
+			\item OpenGL GUI
+			\item Written 100\% in Python
+			\item Reasonable performance (though certainly not fast)
+			\item Arbitrary shapes/mass fields supported
+		\end{itemize}
+\end{columns}
+
+\vskip15pt
+Download Link:
+\begin{center}
+http://github.com/mikolalysenko/Collisions
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{To Do}
+\begin{itemize}
+\item Analysis is still very incomplete
+\item Need to implement a proper solver for physics system
+\item Benchmarks, etc.
+\item More development/write ups needed
+\end{itemize}
 \end{frame}
 
 \end{document}
