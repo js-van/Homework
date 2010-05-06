@@ -52,7 +52,7 @@ Cons:
 \begin{itemize}
 	\item{-} Inaccurate at extremely large energies
 	\item{-} Bad for materials with low elastic modulus
-	\item{-} Not always solvable! (See: Painleve's paradox)
+	\item{-} Not always solvable! (See: Panleve's paradox)
 \end{itemize}
 \end{frame}
 
@@ -92,7 +92,7 @@ Isomorphic to finite dimensional Lie group, $SE(d) \cong SO(d) \ltimes \R^d$
 		
 	\column{.5\textwidth}
 		\begin{center}
-		Can be parametrized by a translation $t$ and a rotation $R$
+		Can be parameterized by a translation $t$ and a rotation $R$
 		
 		\vskip15pt
 		
@@ -218,7 +218,7 @@ Handling collisions this way is hard
 \item{-} Contact manifolds can be difficult to classify
 \item{-} Normal forces are ambiguous for curvy shapes
 \item{-} Impulses are discontinuous; results in stiff system
-\item{-} Penalty methods don't guarantee separation
+\item{-} Penalty methods don't gaurantee separation
 \item{-} Convergence properties not well understood
 \item{-} Unclear how to handle sharp corners
 \item{-} Discontinuity in simulation
@@ -376,8 +376,8 @@ Conclusion: Translational gradient is just a multiplier
 \begin{frame}
 \frametitle{Rotational Gradient}
 \newcommand{\rr}{\mathfrak{r}}
-Parametrize $R = \exp( \mathfrak{r} )$, where $\rr \in \mathfrak{so}(d)$ with basis $\rr_{k,l}$ \vskip2pt
-\hskip5pt{\small In other words $d \times d$ skew symmetric matrices, $\rr^T = -\rr$}
+Parameterize $R = \exp( \mathfrak{r} )$, where $\rr \in \mathfrak{so}(d)$ with basis $\rr_{k,l}$ \vskip2pt
+\hskip5pt{\small In otherwords $d \times d$ skew symmetric matrices, $\rr^T = -\rr$}
 \pause
 \begin{eqnarray*}
 \frac{\partial C_{i,j}}{\partial \rr_{k,l}}  
@@ -493,9 +493,12 @@ Can't do this exactly!
 {\tiny Figure from Chirikjian 2003}
 \pause
 \end{center}
-
-Reason: \emph{Only nontrivial discrete subgroups of $SE(2)$ are 17 plane tiling groups!} 
-
+\begin{columns}
+	\column{.9\textwidth}
+		Reason: \emph{Only nontrivial discrete subgroups of $SE(2)$ are 17 plane tiling groups!} 
+	\column{.1\textwidth}	
+		\includegraphics[height=.5in]{figures/fffuuuu.png}
+\end{columns}
 \pause
 {\small So unless you are happy with a hexagonal grid with 6 rotational samples, forget about doing this losslessly! }
 \end{frame}
@@ -528,7 +531,7 @@ Idea: Do circle drawing in reverse, use Bresenham's algorithm
 		\end{itemize}
 \end{columns}
 \pause
-Minimal storage, uses only integer arithmetic
+Minimal storage, uses only integer arithmetic \includegraphics[height=.5in]{figures/everything_went_better_than_expected.jpg}
 \end{frame}
 
 \begin{frame}

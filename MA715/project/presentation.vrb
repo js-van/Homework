@@ -6,7 +6,7 @@ for x in R:
 v.sort()
 
 fv, Av = unzip(v)
-Q = foldl(Av, +, 0) + foldr(Av, +, 0)
+Q =  foldr(Av, +, 0) - foldl(Av, +, 0)
 
 return max(zip(Q, fv)).second
 \end{lstlisting}
