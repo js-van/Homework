@@ -586,7 +586,7 @@ Takes $O(n \log(n))$ time, uses $O(n)$ space
 \end{frame}
 
 \begin{frame}
-\frametitle{Thresholding Results}
+\frametitle{Low Pass Filter/Thresholding Results}
 \begin{center}
 \centering
 \begin{tabular}{|c|c|c|}
@@ -661,13 +661,15 @@ Where:
 
 Basic implementation so far, just uses implicit Euler.
 
-\hskip10pt Doesn't solve for $\mu$ correctly (currently is constant)
+\hskip10pt Doesn't solve for $\mu$ correctly (currently set to constant)
 
 \vskip15pt
 \begin{columns}
 
 	\column{.5\textwidth}
-		Insert image
+		\begin{center}
+		\includegraphics[width=1.8in]{figures/screenshot.png}
+		\end{center}
 		
 	\column{.5\textwidth}
 		Features:
@@ -694,6 +696,17 @@ http://github.com/mikolalysenko/Collisions
 \item Benchmarks, etc.
 \item More development/write ups needed
 \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{References}
+Stewart. "Rigid-body dynamics with friction and impact." SIAM Review, vol. 42 (issue 1), pp. 3-39, 2000.
+\vskip10pt
+Chirikijian and Kyatkin. "Engineering Applications of Noncommutative Harmonic Analysis." CRC Press.  2001
+\vskip10pt
+Baraff. "An Introduction to Physically Based Modelling." ACM SIGGRAPH. 1997
+\vskip10pt
+Arnold. "Mathematical Methods of Classical Mechanics." Springer. 1976.
 \end{frame}
 
 \end{document}
