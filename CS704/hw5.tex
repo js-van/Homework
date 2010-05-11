@@ -1,0 +1,113 @@
+\documentclass{article}
+
+\usepackage{fullpage,amsmath,amsfonts,txfonts,pxfonts}
+\usepackage[all]{xy}
+
+\begin{document}
+
+\newcommand{\N}{\mathbb{N}}
+
+\paragraph{8.2}
+
+\subparagraph{a}
+The codomain of $length$ is $\N$ and by definition the map must be surjective, so if $\leq$ on $\N$ is a cpo, so then this relation is a cpo.  However, $\N$ is not a cpo since it has no maximal element and so the relation is not a cpo.
+
+\subparagraph{b}
+The codomain of $Letters$ is the powerset lattice $2^{X}$, which is finite, and so the relation is a partial order.
+
+\subparagraph{c}
+For the first question, the answer is clearly no.  Pick $X$ to be a unary alphabet, then the relation reduces to that in part a.
+
+\paragraph{8.3}
+
+$f \subseteq g \implies f \leq g$ :  Since $x \sqsubseteq_D x$, the condition is vacuously true.
+
+$f \leq g \implies f \subseteq g$ : Pick a pair $x \sqsubseteq_D y$.  Then the following diagram commutes:
+\[
+\xymatrix{
+x \ar[dd]^f \ar[rrd]^g
+& y \ar[l]^{\sqsubseteq_D} \ar[dd]^f \ar[rrd]^g \\
+&
+& g(x) \ar[lld]^{\sqsubset_E}_{(1)}
+& g(y) \ar[l]^{\sqsubseteq_E} \ar[lld]^{\sqsubset_E}_{(1)} \ar@{.>}[llld] \\
+f(x) 
+& f(y) \ar[l]^{\sqsubseteq_E} }
+\]
+
+\paragraph{8.12}
+Consider the following commutative diagram for a cone $T$ where each arrow denotes a $\sqsubseteq$ relation:
+\[
+\xymatrix{
+  ...
+& C_i \ar[l] \ar[ddl]
+& ... \ar[l] \ar[ddll]
+& {\mathop{\text{lim}} \limits_{\leftarrow} C} \ar[l] \\
+ & & & & T \ar[ull] \ar[dll] \ar@{.>}[ul] \ar@{.>}[dl] \\
+  ...
+& D_j \ar[l] \ar[uul]
+& ... \ar[l] \ar@{<->}[uu] \ar[uull]
+& {\mathop{\text{lim}} \limits_{\leftarrow} D} \ar[l] 
+}
+\]
+So, any cone over $C$ is also a cone over $D$ and thus the limits are isomorphic.
+
+\paragraph{9.3}
+
+\subparagraph{a}
+Consider the program:
+\begin{verbatim}
+void f() { f(); }
+\end{verbatim}
+
+Which has the equation:
+\[ V_f = \{ f \} \cup V_f \]
+
+And so any set $S$ such that $f \in S$ is a solution for $V_f$.
+
+\subparagraph{b}
+For a given program, $P$, with function names, $S_P = \{ f_0, f_1, ... f_n \}$, define a \emph{dependence relation over $P$} to be a transitive relation, $R_P$ on $S$.  Call $f_i$ dependent on $f_j$ subject to $R_P$ if $R_P(f_i, f_j) = 1$, or $R_P(f_i, f_j) = 0$ otherwise.  Now define a category, $D_P$ whose objects are dependence relations over $P$ and whose morphisms are relation homomorphisms, ie:
+\[ \text{Obj}(D_P) = \{ R_P | R_P \text{ is a dependence relation over } P \} \]
+\[ \text{Hom}_{D_P}(X, Y) = \{
+	X \stackrel{f}{\to} Y | 
+	\forall f_i, f_j \in S : X(f_i, f_j) \implies Y(f_i, f_j)
+\} \]
+This category has both initial and terminal objects, $\perp, \top$:
+\[ \forall f_i, f_j : \perp(f_i, f_j) = 0 \]
+\[ \forall f_i, f_j : \top(f_i, f_j) = 1 \]
+And so (co)limits exist in $D_P$. 
+
+Next, define a natural transformation $\eta : D_P \to (D_P \to D_P)$ such that for relations $X, Y \in \text{Obj} (D_P)$ and functions $f_i,f_j \in S$:
+\[ \left( \eta_X(Y) \right)(f_i, f_j) = X(f_i, f_j) \vee \bigvee \limits_{f_k \in S} X(f_i, f_k) \wedge Y(f_k, f_j) \]
+
+Observe that the definition for a program $P$ gives a particular relation $F_P \in \text{Obj}(D_P)$ such that:
+\[ F_P \left( f_i, f_j \right) = \left \{ \begin{array}{cc}
+1 & \text{if declaration of }f_i\text{ references } f_j \\
+0 & \text{otherwise}
+\end{array} \right. \]
+And that since the Hom-sets in $D_P$ are singletons, it is also a partial order.
+
+Now there is an isomorphism between the sets $V_{f_i}$ and the objects of $D_P$ such that for each collection such set there is an unique element, $U \in \text{Obj}(D_P)$, if and only if $f_j \in V_i$ then $U(f_i,f_j) = 1$.  And moreover, the solution to the above system of equations is equivalent to the following:
+\[ V = \eta_{F_P}(V) \]
+And since $D_P$ has limits and $\eta$ is a natural transformation, there is a unique universal object $\bar{X}$ such that:
+\[ \bar{X} = \bigsqcup \limits_{k=0}^{\infty} \eta_{F_P}^k (\perp) \]
+And moreover:
+\[ \bar{X} = \eta_{F_P}(\bar{X}) \]
+And so $\bar{X}$ is isomorphic to the least fixed point of $\eta{F_P}$.
+
+\subparagraph{c}
+For the sake of convenience, we shall denote the objects of $D_P$ using a table, where the $i,j^{th}$ entry for the description of the object $X$ corresponds to the value $X_{f_i,f_j}$.  Since we only have one $f$ in problem $A$, this matrix can be written as just a single element and could be further reduced to just a single element.  Thus:
+\[ \perp = 0 \]
+\[ F_p = 1 \]
+\[ \top = 1 \]
+And so we iterate to find the fixed poind and get:
+\[ F^0 = 0 \]
+\[ F^1 = F_p \vee F^0 = 1 \]
+\[ F^2 = F_p \vee F^1 = 1 \]
+
+\subparagraph{d}
+i.  A function is recursive if its set of called functions contains itself.  Thus, if the least upper bound of $F_P = X$, then $f_i$ is recursive if and only if $X(f_i, f_i) = 1$.
+
+ii. There is only one function, $f$ and it is recursive.
+
+\end{document}
+

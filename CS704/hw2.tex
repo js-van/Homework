@@ -4,27 +4,19 @@
 
 \begin{document}
 
-\begin{flushright}
-{\bf Mikola Lysenko
-
-CS704, HW 1 
-
-2-8-2010}
-\end{flushright}
-
 \paragraph{3.c}
-Consider the $\lambda$-term:
+Consider the Lambda expression:
 \[ (\lambda x. \lambda y.y)( (\lambda x.xxx)(\lambda x.xxx) ) \]
-If one performs the leftmost-outermost expansion then this expression reaches the normal form $\lambda y.y$ in one $\beta$-reduction.  Now define $S = \lambda x.xxx$ and consider any $\lambda$-term of the form:
+If one performs the leftmost-outermost expansion, this expression reaches the normal form, $\lambda y.y$ in one $\beta$-reduction and so it is non-divergent.  Now, define $S = \lambda x.xxx$, and consider the general expression of the form:
 \[ (\lambda x. \lambda y.y)( S^n ) \]
-Where $n \geq 2$. Taking the rightmost outer most $\beta$-reduction leads to the following sequence:
+Where $n \geq 2$. Taking the rightmost outer most expansion leads to the following expansion
 \begin{eqnarray*}
 & & ( \lambda x . \lambda y.y)( S^n ) \\
 & \equiv & (\lambda x. \lambda y.y)(S^{n-2} (\lambda x.xxx) (\lambda x.xxx) ) \\
 & \vdash_\beta & (\lambda x. \lambda y.y)(S^{n-2} (\lambda x.xxx) (\lambda x.xxx) (\lambda x.xxx) ) \\
 & \equiv & ( \lambda x . \lambda y.y)( S^{n+1} )
 \end{eqnarray*}
-Thus each rightmost outermost $\beta$-reduction takes $(\lambda x. \lambda y.y)(S^n) \mapsto (\lambda x. \lambda y.y)(S^{n+1})$, and therefore will never reach the normal form.  So we conclude that the rightmost-outermost expansion rule does not always find a normal form if one exists.
+Thus each rightmost outermost $\beta$-reduction takes $(\lambda x. \lambda y.y)(S^n) \mapsto (\lambda x. \lambda y.y)(S^{n+1})$, and thus will never reach the normal form.  Therefore, the rightmost-outermost expansion rule does not always find a normal form if one exists.
 
 \paragraph{5.a}
 By the hypothesis, assume there exist lambda terms, $A \neq B$ and define 
@@ -125,7 +117,7 @@ Y & \equiv & \lambda f. (\lambda x. f(xx)) (\lambda x. f(xx)) \\
 \end{eqnarray*}
 Thus we have:
 \[ Y \rightarrow^*_{\alpha,\beta} \lambda f . f ( (\lambda x. f(xx)) (\lambda x. f(xx)) ) \leftarrow^*_{\alpha,\beta} G Y \]
-And so $Y = GY$, which by the hypothesis shows that $Y$ is a fixed point combinator.
+And so $Y = GY$, which by the characterization shows that $Y$ is a fixed point combinator.
 
 \paragraph{13.b}
 If $M$ is a fixed point combinator, then for any $F$:

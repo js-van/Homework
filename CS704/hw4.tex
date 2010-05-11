@@ -13,8 +13,14 @@ To do this, we introduce the following preconditions and postconditions on the f
 \[ \derive{}{\{ x = a \and y = b \} C \{ x = b \and y = a \}} \]
 We now apply the assignment, consequence and composition axiom schemas several times to verify the expression:
 \begin{equation*}
-\begin{tiny}
 \derive{
+ \derive{}{
+	\hpl{x = a \and y = b}{x = x \oplus y; y = x \oplus y ;}{x = a \oplus b \and y = a}} \and
+ \derive{}{
+ 	\hpl{x = a \oplus b \and y = a}{x = y \oplus x ;}{x = b  \and y = a }}}{ 
+ \hpl{x = a \and y = b}{x = x \oplus y; y = x \oplus y ; x = x \oplus y ;}{x = b \and y = a} }
+\end{equation*}
+\[
  \derive{
  	\derive{}{
  	  \hpl{x = a \and y = b}{x = x \oplus b}{x = a \oplus b \and y = b}} \and
@@ -22,11 +28,7 @@ We now apply the assignment, consequence and composition axiom schemas several t
  	  \hpl{x = a \oplus b \and y = b}{y = x \oplus y}{x = a \oplus b \and y = a}}
  	}{
 	\hpl{x = a \and y = b}{x = x \oplus y; y = x \oplus y ;}{x = a \oplus b \and y = a}} \and
- \derive{}{
- 	\hpl{x = a \oplus b \and y = a}{x = y \oplus x ;}{x = b  \and y = a }}}{ 
- \hpl{x = a \and y = b}{x = x \oplus y; y = x \oplus y ; x = x \oplus y ;}{x = b \and y = a} }
-\end{tiny}
-\end{equation*}
+\]
 (Note that $\oplus$ is used in place of $\wedge$ to denote exclusive-or to remove ambiguity.)
 
 \paragraph{2}
@@ -110,6 +112,12 @@ To finish the proof, we must check the conditions on the intro fragment:
 }
 \]
 And so the code correctly implements swap.
+
+
+\paragraph{4}
+
+\subparagraph{a}
+
 
 
 \end{document}
