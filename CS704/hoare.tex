@@ -1,6 +1,36 @@
 \documentclass{article}
+\usepackage{rotating}
 \begin{document}
-\[
-\left ( \left ( c_X \neq F_\rho \left ( F_\rho \left ( c_{\&px}\right )\right )\right ) \vee \left ( c_Y \neq F_\rho \left ( F_\rho \left ( c_{\&px}\right )\right )\right )\right )
-\]
+\begin{sidewaystable} \centering \begin{tabular}{|c|c|c|} \hline Step & Condition & Store \\ \hline
+1 & 
+$ \left (  \left ( c_X \neq  F_{\rho}^0 \left (  F_{\rho}^0 \left ( c_{\&py} \right )  \right ) \right ) \vee  \left ( c_Y \neq  F_{\rho}^0 \left (  F_{\rho}^0 \left ( c_{\&px} \right )  \right ) \right )\right )$
+ & 
+$F_\rho^0 $
+ \\
+2 & 
+$ \left (  \left ( c_X \neq c_{temp}\right ) \vee  \left ( c_Y \neq  F_{\rho}^0 \left (  F_{\rho}^0 \left ( c_{\&px} \right )  \right ) \right )\right )$
+ & 
+$F_\rho^1 = F_\rho^0 \left [  F_{\rho}^0 \left ( c_{\&py} \right )  \mapsto c_{temp} \right ] $
+ \\
+3 & 
+$ \left (  \left ( c_X \neq c_{temp}\right ) \vee  \left ( c_Y \neq  F_{\rho}^1 \left (  F_{\rho}^1 \left ( c_{\&py} \right )  \right ) \right )\right )$
+ & 
+$F_\rho^2 = F_\rho^1 \left [  F_{\rho}^0 \left ( c_{\&py} \right )  \mapsto c_{temp},  F_{\rho}^1 \left ( c_{\&px} \right )  \mapsto  F_{\rho}^2 \left (  F_{\rho}^2 \left ( c_{\&py} \right )  \right )  \right ] $
+ \\
+4 & 
+$ \left (  \left ( c_X \neq  F_{\rho}^2 \left (  F_{\rho}^2 \left ( c_{\&px} \right )  \right ) \right ) \vee  \left ( c_Y \neq  F_{\rho}^1 \left (  F_{\rho}^1 \left ( c_{\&py} \right )  \right ) \right )\right )$
+ & 
+$F_\rho^3 = F_\rho^2 \left [  F_{\rho}^0 \left ( c_{\&py} \right )  \mapsto  F_{\rho}^2 \left (  F_{\rho}^2 \left ( c_{\&px} \right )  \right ) ,  F_{\rho}^1 \left ( c_{\&px} \right )  \mapsto  F_{\rho}^1 \left (  F_{\rho}^1 \left ( c_{\&py} \right )  \right )  \right ] $
+ \\
+5 & 
+$ \left (  \left ( c_X \neq  F_{\rho}^2 \left (  F_{\rho}^2 \left ( c_{\&px} \right )  \right ) \right ) \vee  \left (  F_{\rho}^3 \left (  F_{\rho}^3 \left ( c_{\&py} \right )  \right )  \neq  F_{\rho}^1 \left (  F_{\rho}^1 \left ( c_{\&py} \right )  \right ) \right )\right )$
+ & 
+$F_\rho^3 $
+ \\
+6 & 
+$ \left (  \left (  F_{\rho}^3 \left (  F_{\rho}^3 \left ( c_{\&px} \right )  \right )  \neq  F_{\rho}^2 \left (  F_{\rho}^2 \left ( c_{\&px} \right )  \right ) \right ) \vee  \left (  F_{\rho}^3 \left (  F_{\rho}^3 \left ( c_{\&py} \right )  \right )  \neq  F_{\rho}^1 \left (  F_{\rho}^1 \left ( c_{\&py} \right )  \right ) \right )\right )$
+ & 
+$F_\rho^3$
+ \\
+\hline \end{tabular} \end{sidewaystable}
 \end{document}
