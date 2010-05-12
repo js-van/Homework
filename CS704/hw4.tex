@@ -118,6 +118,46 @@ And so the code correctly implements swap.
 
 \subparagraph{a}
 
+Take the following configuration:
+
+\begin{verbatim}
+px     = &py
+py     = 0x100
+*0x100 = 0
+\end{verbatim}
+
+If we execute the code, then we get the following sequence of states:
+
+1:
+\begin{verbatim}
+PC	   = 1
+temp   = &py
+px     = &py
+py     = 0x100
+*0x100 = 0
+\end{verbatim}
+
+2.
+\begin{verbatim}
+PC	   = 2
+temp   = &py
+px     = &py
+py     = 0
+*0x100 = 0
+\end{verbatim}
+
+3. Segmentation fault
+\begin{verbatim}
+PC	   = 2
+temp   = &py
+px     = &py
+py     = 0
+*0x100 = 0
+\end{verbatim}
+
+
+\subparagraph{b}
+
 
 
 \end{document}
