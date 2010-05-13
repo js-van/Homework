@@ -1,52 +1,73 @@
 from scipy import *
-from scipy.linalg import *
 from scipy.sparse import *
 from scipy.linsolve import *
-from numpy import *
 from pylab import *
+import sympy as sp
+import sympy.abc as abc
+import sympy.integrals as spi
 
-M = 19
-h = 1. / float(M+1.)
-x = arange(h, 1., h)
-xbig = hstack(([0.], x, [1.]))
+def fe_solve(x, F2, F0, FR, X):
+	M = len(x)
+	A = dok_matrix((M, M))
+	b = zeros(M)
+	
+	def delta(i,j):
+		return int((i + M)%M == (j+M)%M)
 
-# Construct A matrix:
-e = ones((M))
-A = spdiags([-e, 2*e, -e], range(-1,2), M, M)
+	def p2(i, j, xi0, xi1, xi2):
+		return F2 * (delta(i, j+1) - delta(i,j)) / (xi1 - xi0) + \
+			   F2 * (delta(i, j-1) - delta(i,j)) / (xi2 - xi1)
 
-# RHS functions
-def fun1(x, a):
-	return (x-a)*10.*(1.-10.*(x-0.5)**2)*exp(-5.*(x-0.5)**2)
+	def p0(i, j, xi0, xi1, xi2):
+		t1 = spi.Integral(F0 * (X - xi0) * ( \
+			  delta(i,j)   * (X - xi0) \
+			+ delta(i,j+1) * (xi1 - X)), (X, xi0, xi1)).n()  \
+			/ (xi1 - xi0)**2
+		t2 = spi.Integral(F0 * (xi2 - X) * ( \
+			  delta(i,j)   * (xi2 - X) \
+			+ delta(i,j-1) * (X - xi1)), (X, xi1, xi2)).n()  \
+			/ (xi2 - xi1)**2
+		return t1 + t2
 
-# Construct RHS vector
-b = zeros(M)
-for i in range(M):
+	def f(i, xi0, xi1, xi2):
+		return spi.Integral(FR * (X - xi0), (X, xi0, xi1)).n()  / (xi1 - xi0) \
+			 + spi.Integral(FR * (xi2 - X), (X, xi1, xi2)).n()  / (xi2 - xi1)
 
-	#Add entries to A for extra points
-	#Adjust b
+	for i in range(M):	
+		#Handle periodicity conditions
+		xi0 = x[i-1]
+		xi1 = x[i]
+		xi2 = x[(i+1) % len(x)]
+		if(xi0 > xi1):
+			xi0 -= 2 * pi
+		if(xi1 > xi2):
+			xi2 += 2 * pi
 
-    tmp1 = (fun1(xbig[i+1],xbig[i]  ) + fun1(xbig[i],  xbig[i])  )*.5*h
-    tmp2 = (fun1(xbig[i+1],xbig[i+2]) + fun1(xbig[i+2],xbig[i+2]))*.5*h
-    b[i] = tmp1 - tmp2
+		#Construct A
+		for j in range(M):
+			t = p2(i, j, xi0, xi1, xi2) + p0(i, j, xi0, xi1, xi2)
+			if(abs(t) > 1e-6):
+				A[i,j] = float(t)
+		
+		#Construct b
+		b[i] = f(i, xi0, xi1, xi2)
 
-print A
-print b
+	return spsolve(A, b)
 
-print A.shape
-print b.shape
+#Use sympy to create symbolic coefficients
+X = abc.x
+F2 = 1 		# Must be a scalar
+F0 = sp.sin(X) + sp.cos(X) + sp.sin(2 * X)
+FR = sp.exp(sp.sin(X) + sp.cos(X))
 
-# Solve linear system
-U = spsolve(A, b)
-Ubig = hstack(([0.], U, [0.]))
+#Generate grid and solve U
+x = arange(-pi, pi, 2. * pi / 30.)
+U = fe_solve(x, F2, F0, FR, X)
 
-print Ubig
+#Compute exact soln. for comparison
+Uex = exp(sin(x) + cos(x))
 
-# Exact solution
-Uex = exp(-(5./4.)*(2.*xbig-1)**2) - exp((-5.)/4.)
-
-print Uex
-
-# Plot solution
-plot(xbig, Ubig)
-plot(xbig, Uex)
+#Plot
+plot(x, U)
+plot(x, Uex)
 show()

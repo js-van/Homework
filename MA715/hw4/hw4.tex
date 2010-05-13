@@ -1,9 +1,23 @@
 \documentclass{article}
 
-\usepackage{fullpage,verbatim,amsmath,graphicx}
+\usepackage{fullpage,verbatim,amsmath,graphicx,listings,color}
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 \begin{document}
+
+\lstset{
+language=Python, 
+basicstyle=\scriptsize,
+backgroundcolor=\color{white},
+showspaces=false,
+showstringspaces=false,
+showtabs=false,
+frame=shadowbox,
+tabsize=4,
+captionpos=b,
+title=\lstname,
+breaklines=true,
+breakatwhitespace=true}
 
 \begin{titlepage}
  
@@ -83,8 +97,8 @@ Next we deal with $p_0$:
 \begin{eqnarray*}
 p_0(\varphi^i, \varphi^j) & = & \int \limits_{-\pi}^{\pi} \left( \sin(x) + \cos(x) + 2 \sin(x) \cos(x) \right) \varphi^i(x) \varphi^j(x) dx\\
  & = & 
-\int \limits_{x_{i-1}}^{x_i} \left( \sin(x) + \cos(x) + 2 \sin(x) \cos(x) \right) \frac{ (x - x_{i-1}) (\delta_{i,j} (x - x_{i-1}) - \delta_{i,j+1}(x_i - x)) }{\left(x_{i} - x_{i-1}\right)^2} dx + \\
-& & \int \limits_{x_{i}}^{x_{i+1}} \left( \sin(x) + \cos(x) + 2 \sin(x) \cos(x) \right) \frac{ (x_{i+1} - x) (\delta_{i,j} (x_{i+1} - x) - \delta_{i,j-1}(x - x_i))}{\left(x_{i} - x_{i+1}\right)^2} dx
+\int \limits_{x_{i-1}}^{x_i} \left( \sin(x) + \cos(x) + 2 \sin(x) \cos(x) \right) \frac{ (x - x_{i-1}) (\delta_{i,j} (x - x_{i-1}) + \delta_{i,j+1}(x_i - x)) }{\left(x_{i} - x_{i-1}\right)^2} dx + \\
+& & \int \limits_{x_{i}}^{x_{i+1}} \left( \sin(x) + \cos(x) + 2 \sin(x) \cos(x) \right) \frac{ (x_{i+1} - x) (\delta_{i,j} (x_{i+1} - x) + \delta_{i,j-1}(x - x_i))}{\left(x_{i} - x_{i+1}\right)^2} dx
 \end{eqnarray*}
 
 And finally $f$:
@@ -108,7 +122,16 @@ And so the final problem is to solve for some coefficients $u^i$ such that:
 
 \subparagraph{c}
 
-To evaluate the integrals in part b, we use numerical quadrature.
+To evaluate the integrals in part b, we use numerical quadrature (except for the Laplacian term, which is trivial).  Here is my code (written in python using SciPy, PyLab and Sympy):
+
+\pagebreak
+\lstinputlisting{prob1.py}
+
+And here is the output plot of the computed solution compared to the exact solution, $u(x) = \exp( \sin(x) + \cos(x) )$:
+
+\begin{center}
+\includegraphics[width=4in]{prob1_result.png}
+\end{center}
 
 \paragraph{2}
 
