@@ -57,7 +57,7 @@ By construction our space of test functions satisifies the boundary, so we have 
 
 \subparagraph{b}
 
-To get a cG(1) finite element discretization, we restrict the space of test functions and solutions to piecewise linear maps, spanned by the basis of hat functions.  Fix a collection of $n$ ordered grid points $X = \{ x_i \in [-\pi, \pi) | x_i < x_{i+1}, i \in [0,N) \}$ where $x_0 = -\pi$.  Now we define the basis hat functions, $\varphi^i(x)$ as follows:
+Fix a collection of $n$ ordered grid points $X = \{ x_i \in [-\pi, \pi) | x_i < x_{i+1}, i \in [0,N) \}$.  To get a cG(1) finite element discretization, we restrict the space of test functions and solutions to piecewise linear maps over this grid, which is spanned by the basis of hat functions.  We define the $i^{th}$ basis hat function, $\varphi^i(x)$, as follows:
 
 \[ \varphi^i(x) = \left \{ \begin{array}{cc}
 \frac{x_{i+1} - x}{x_{i+1} - x_{i}} & \textrm{if } x \in [x_{i},   x_{i+1}) \\
@@ -65,7 +65,7 @@ To get a cG(1) finite element discretization, we restrict the space of test func
 0 & \textrm{otherwise}
 \end{array} \right. \]
 
-With the exception that for $x_0, x_{n-1}$ boundary conditions are applied to make the grid cyclic.  This may be done by just taking the indexes mod $n$ and the difference terms mod $2 \pi$.  Substituting this into the above equation gives the following matrix equation for the discrete Galerkin equation:
+Boundary conditions are applied to make the test functions cyclic.  This may be done by just taking the indexes mod $n$ and the difference terms mod $2 \pi$.  Substituting this into the above equation gives the following matrix equation for the discrete Galerkin equation:
 
 \[ p_2(\varphi^i, \varphi^j) + p_0(\varphi^i, \varphi^j) = f(\varphi^j) \]
 
@@ -81,12 +81,16 @@ p_2(\varphi^i, \varphi^j) & = & - \int \limits_{-\pi}^{\pi} \varphi^i_x(x) \varp
 
 Next we deal with $p_0$:
 \begin{eqnarray*}
-p_0(\varphi^i, \varphi^j) & = & \\
+p_0(\varphi^i, \varphi^j) & = & \int \limits_{-\pi}^{\pi} \left( \sin(x) + \cos(x) + 2 \sin(x) \cos(x) \right) \varphi^i(x) \varphi^j(x) dx\\
+ & = & 
+\int \limits_{x_{i-1}}^{x_i} \left( \sin(x) + \cos(x) + 2 \sin(x) \cos(x) \right) \frac{ (x - x_{i-1}) (\delta_{i,j} (x - x_{i-1}) - \delta_{i,j+1}(x_i - x)) }{\left(x_{i} - x_{i-1}\right)^2} dx + \\
+& & \int \limits_{x_{i}}^{x_{i+1}} \left( \sin(x) + \cos(x) + 2 \sin(x) \cos(x) \right) \frac{ (x_{i+1} - x) (\delta_{i,j} (x_{i+1} - x) - \delta_{i,j-1}(x - x_i))}{\left(x_{i} - x_{i+1}\right)^2} dx
 \end{eqnarray*}
 
 And finally $f$:
 \begin{eqnarray*}
-f(\varphi^i) & = & \\
+f(\varphi^i) & = & \int \limits_{-\pi}^{\pi} e^{\sin(x) + \cos(x)} \varphi^i(x) dx \\
+& = & \int \limits_{x_{i-1}}^{x_i} e^{\sin(x) + \cos(x)} \frac{x - x_{i-1}}{x_{i} - x_{i-1}} dx + \int \limits_{x_{i}}^{x_{i+1}} e^{\sin(x) + \cos(x)} \frac{x_{i+1} - x}{x_{i+1} - x_{i}} dx
 \end{eqnarray*}
 
 Putting this together, we get the following coefficient matrix, $M_{i,j}$, such that:
@@ -103,6 +107,8 @@ And so the final problem is to solve for some coefficients $u^i$ such that:
 \[ M u = b \]
 
 \subparagraph{c}
+
+To evaluate the integrals in part b, we use numerical quadrature.
 
 \paragraph{2}
 

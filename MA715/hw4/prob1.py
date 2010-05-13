@@ -21,6 +21,10 @@ def fun1(x, a):
 # Construct RHS vector
 b = zeros(M)
 for i in range(M):
+
+	#Add entries to A for extra points
+	#Adjust b
+
     tmp1 = (fun1(xbig[i+1],xbig[i]  ) + fun1(xbig[i],  xbig[i])  )*.5*h
     tmp2 = (fun1(xbig[i+1],xbig[i+2]) + fun1(xbig[i+2],xbig[i+2]))*.5*h
     b[i] = tmp1 - tmp2
