@@ -44,10 +44,10 @@ def fe_solve(x, F2, F0, FR, X):
 			xi2 += 2 * pi
 
 		#Construct A
-		for j in range(M):
+		for j in range(i-1, i+2):
 			t = p2(i, j, xi0, xi1, xi2) + p0(i, j, xi0, xi1, xi2)
 			if(abs(t) > 1e-6):
-				A[i,j] = float(t)
+				A[(i+M)%M,(j+M)%M] = float(t)
 		
 		#Construct b
 		b[i] = f(i, xi0, xi1, xi2)
@@ -68,6 +68,22 @@ U = fe_solve(x, F2, F0, FR, X)
 Uex = exp(sin(x) + cos(x))
 
 #Plot
-plot(x, U)
-plot(x, Uex)
-show()
+P = figure()
+plot(x, U, figure=P)
+plot(x, Uex, figure=P)
+P.savefig("prob1_plot.png")
+
+#Calculate the L2 error norm
+def get_error(M):
+	x = arange(-pi, pi, 2. * pi / M)
+	U = fe_solve(x, F2, F0, FR, X)
+	Uex = exp(sin(x) + cos(x))
+	return norm(U - Uex)
+	
+#Plot relative errors
+N = range(5, 512, 5)
+E = [get_error(M) for M in N]
+Q = figure()
+loglog(N, E, figure=Q)
+Q.savefig("prob1_err.png")
+
