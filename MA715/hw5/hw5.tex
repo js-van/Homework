@@ -139,6 +139,15 @@ This is a heatmap plot of the resulting distribution:
 
 \paragraph{2}
 
+Since I am using python, I couldn't get the meshgen code to work.  Instead, I downloaded a generic wrapper for QHull and used basic Delaunay triangulation.  To fit points to the boundary, I used scipy's nonlinear optimizer to enforce the constraint.
+
+\lstinputlisting{trimesh.py}
+
+\lstinputlisting{prob2.py}
+
+\begin{center}
+\includegraphics[width=5in]{prob2_result.png}
+\end{center}
 
 \paragraph{3}
 
