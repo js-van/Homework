@@ -204,4 +204,25 @@ There appear to be some issues with the set up for the problem.  I would have th
 
 \paragraph{4}
 
+To compute this, we just need to set up the Laplacian matrix for the system then solve for its top 4 eigenvalues.  In theory, the following code should do this:
+
+\lstinputlisting{prob4.py}
+
+
+But in practice, I get the following eigenvalues:
+\[ [ 3.59684369e+09+0.j,  -2.95363663e+09+0.j,   7.68667041e+08+0.j,  -8.05749193e+08+0.j ] \]
+
+And these eigen vectors:
+\begin{center}
+\includegraphics[width=3in]{prob4_eig0.png}
+
+\includegraphics[width=3in]{prob4_eig1.png}
+
+\includegraphics[width=3in]{prob4_eig2.png}
+
+\includegraphics[width=3in]{prob4_eig3.png}
+\end{center}
+
+So it seems that I do not have enough time to correct these mistakes.
+
 \end{document}

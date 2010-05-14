@@ -32,7 +32,6 @@ class TriElement:
 				alj = array(self.alpha[j,1:3]).flatten()
 				J = matrix([ [self.nx[p] - self.nx[0], self.ny[p] - self.ny[0]] for p in range(1,3) ])
 				S = -sum(ali * alj) / (2. * det(J))
-				print S
 				res.append(((self.ni[i], self.ni[j]), S))
 		return res
 
