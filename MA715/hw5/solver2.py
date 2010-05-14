@@ -10,7 +10,7 @@ class TriElement:
 		self.ni = ni
 		self.nx = [nx[k] for k in ni]
 		self.ny = [ny[k] for k in ni]
-		M = matrix([ [ 1, nx[k], ny[k], nx[k] * ny[k]] for k in ni ])
+		M = matrix([ [ 1, nx[k], ny[k] ] for k in ni ])
 		self.alpha = inv(transpose(M))
 	
 	def laplacian(self):
