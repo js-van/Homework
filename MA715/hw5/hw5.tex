@@ -58,14 +58,14 @@ Starting on the left hand side, we work term by term:
 \int \limits_{-1}^{1} \int \limits_{-1}^{1} -u_{xx}(x,y) v(x,y) dx dy & = &
 \int \limits_{-1}^{1} \left( -u_x(x,y) v(x,y) |_{-1}^{1} + \int \limits_{-1}^{1} u_{x}(x,y) v_{x}(x,y) dx \right) dy \\
 & = & \int \limits_{\Omega} u_{x}(x,y) v_{x}(x,y) d \Omega \\
-& = & p_0(u, v)
+& = & p_1(u, v)
 \end{eqnarray*}
 By symmetry:
-\[ p_1(u,v) = \int \limits_{\Omega} u_{yy} v d \Omega = \int \limits_{\Omega} u_{y}(x,y) v_{y}(x,y) d \Omega \]
+\[ p_2(u,v) = \int \limits_{\Omega} u_{yy} v d \Omega = \int \limits_{\Omega} u_{y}(x,y) v_{y}(x,y) d \Omega \]
 For the right hand side, we just get:
 \[ b(v) = \int \limits_{\Omega} f(x,y) v(x,y) d \Omega \]
 And so the weak form of the variational problem is:
-\[ p_0(u,v) + p_1(u,v) = b(v) \]
+\[ p_1(u,v) + p_2(u,v) = b(v) \]
 
 \subparagraph{b}
 
@@ -84,32 +84,54 @@ Now to construct the matrix equations for this system, we first consider the wea
 \[ \varphi^i(x) = \alpha^i_1 + \alpha^i_2 x + \alpha^i_3 y + \alpha^i_4 x y \]
 And:
 \[ \varphi^i_{x}(x) = \alpha^i_2 + \alpha^i_4 y \]
-To integrate $p_0(\varphi^i, \varphi^j)$, we split the integral into two triangles, indexed by $\Delta(1, 2, 3)$ and $\Delta(1, 3, 4)$, then integrate in barycentric coordinates.  We do this for the first triangle $\Delta(1,2,3)$ now.  Let:
+To integrate $p_1(\varphi^i, \varphi^j)$, we split the integral into two triangles, indexed by $\Delta(1, 2, 3)$ and $\Delta(1, 3, 4)$, then integrate in barycentric coordinates.  We do this for the first triangle $\Delta(1,2,3)$ now.  Let:
 \[ J = \left( \begin{array}{cc}
 x_2 - x_1 & y_2 - y_1 \\
 x_3 - x_1 & y_3 - y_1
 \end{array} \right) \]
+And define the affine transformation:
+\[ \mathcal{T}(\lambda_1, \lambda_2) = J \left( \begin{array}{c}
+\lambda_1 \\
+\lambda_2 \\
+\end{array} \right) + \left( \begin{array}{c}
+x_1 \\
+y_1 \\
+\end{array} \right) \]
 And so we get the following:
 \begin{eqnarray*}
 \int \limits_{\Delta(1,2,3)} \varphi^i_x(x,y) \varphi^j_x(x,y) d x d y & = & 
-\frac{1}{\det J} \int \limits_{0}^{1} \int \limits_{0}^{1- \lambda_2} p_0(\varphi^i(J (\lambda_1, \lambda_2)), \varphi^j(J(\lambda_1, \lambda_2))) d \lambda_1 d \lambda_2  \\
-& = & \int \limits_{0}^{1} \int \limits_{0}^{1 - \lambda_2}
-\alpha^i_2 \alpha^j_2 + (\alpha^i_4 \alpha^j_2  + \alpha^i_2 \alpha^j_4) (J_{2,1} \lambda_1 + J_{2,2} \lambda_2) + \alpha^i_4 \alpha^j_4 (J_{2,1} \lambda_1 + J_{2,2} \lambda_2)^2 d \lambda_1 d \lambda_2 \\
-& = & \frac{1}{2 \det J} \left( \alpha^i_2 \alpha^j_2
-+ \frac{1}{3} (J_{2,1} + J_{2,2}) (\alpha^i_2 \alpha^j_4 + \alpha^j_2 \alpha^i_4)
-+ \frac{1}{6} (J_{2,1} + J_{2,2})^2 \alpha^i_4 \alpha^j_4 \right) \\
-& = & T^1_0
+\frac{1}{\det J} \int \limits_{0}^{1} \int \limits_{0}^{1- \lambda_2} \varphi^i_{x}(\mathcal{T} (\lambda_1, \lambda_2)) \varphi^j_{x}(\mathcal{T}(\lambda_1, \lambda_2))) d \lambda_1 d \lambda_2  \\
+& = & \frac{1}{\det J} \int \limits_{0}^{1} \int \limits_{0}^{1 - \lambda_2}
+\alpha^i_2 \alpha^j_2 + (\alpha^i_4 \alpha^j_2  + \alpha^i_2 \alpha^j_4) (J_{2,1} \lambda_1 + J_{2,2} \lambda_2 + y_1) \\
+& & \:\:\:\:\:\:\:\:\:\:\:\:\:\: + \:\: \alpha^i_4 \alpha^j_4 (J_{2,1} \lambda_1 + J_{2,2} \lambda_2 + y_1)^2 d \lambda_1 d \lambda_2 
 \end{eqnarray*}
-And by symmetry for $p_1$:
-\[ \int \limits_{\Delta(1,2,3)} \varphi^i_y(x,y) \varphi^j_y(x,y) d x d y = 
-\frac{1}{2 \det J} \left( \alpha^i_3 \alpha^j_3
-+ \frac{1}{3} (J_{1,1} + J_{1,2}) (\alpha^i_3 \alpha^j_4 + \alpha^j_3 \alpha^i_4)
-+ \frac{1}{6} (J_{1,1} + J_{1,2})^2 \alpha^i_4 \alpha^j_4 \right) = T^1_1 \]
-And let $T^2_0, T^2_1$ be the quantities for the second triangle (the only thing which changes is the value of $J$), and thus we get:
-\[ p_0(\varphi^i, \varphi^j) + p_1(\varphi^i, \varphi^j) = T^1_0 + T^1_1 + T^2_0 + T^2_1 \]
-And so the final matrix is just formed by summing over all such values.  Computing the integral over $f$ can be done using numerical quadrature.
+To simplify the expression, make the following substitutions:
+\begin{eqnarray*}
+Q_0 & = & \alpha^i_2 \alpha^j_2 \\
+Q_1 & = & \alpha^i_2 \alpha^j_4 + \alpha^i_4 \alpha^j_2 \\
+Q_2 & = & \alpha^i_4 \alpha^j_4
+\end{eqnarray*}
+And so we get the following quantity:
+\[ = \frac{1}{2\det J} \left( 
+  Q_0 + y_1 \left( Q_1 + y_1 Q_2 \right)
++ \frac{J_{2,1} + J_{2,2}}{3} \left(  
+   Q_1 + \left( 2 y_1 + \frac{J_{2,1} + J_{2,2}}{2} \right) Q_2 \right)  - \frac{J_{2,1} J_{2,2} Q_2}{6} \right) \]
+We shall call this quantity $T^1_1$, where the upper index denotes the triangle and the lower index denotes the $p_1$ component of the Laplacian, thus we get:
+\[ A(\varphi^i, \varphi^j) = p_1(\varphi^i, \varphi^j) + p_2(\varphi^i, \varphi^j) = \sum T^1_1 + T^1_2 + T^2_1 + T^2_2 \]
+And so the final matrix is just formed by summing over all such values.  Computing $f$ can be done approximately by sampling at the nodal values.
 
 \subparagraph{c}
+
+Here is the code I wrote to implement the described method (in Python):
+
+\pagebreak
+\lstinputlisting{prob1.py}
+
+And here is a heatmap plot of the resulting distribution:
+
+\begin{center}
+\includegraphics[width=5in]{prob1_result.png}
+\end{center}
 
 \paragraph{2}
 
