@@ -31,24 +31,7 @@ class QuadElement:
 					S -= sum(T) / (2. * det(J))
 				res.append(((self.ni[i], self.ni[j]), S))
 		return res
-	
-def fe_solve(mesh, nx, ny, f, boundary, bvals):
-	M = len(nx)
-	A = dok_matrix((M, M))
-	b = zeros((M))
-	for e in mesh:
-		for ((i,j), v) in e.laplacian():
-			if(boundary[i]):
-				continue
-			A[i,j] += v
-	for i in range(M):
-		if(boundary[i]):
-			b[i] = bvals[i]
-			A[i,i] = 1
-		else:
-			b[i] = f(nx[i], ny[i])
-	return spsolve(A, b)
-
+		
 def gen_regular_quad_mesh(grid):
 	D, R, C = grid.shape
 	def get_index(ix, iy):
@@ -68,4 +51,21 @@ def gen_regular_quad_mesh(grid):
 				 get_index(ix,   iy+1)],\
 				nx, ny))
 	return mesh, nx, ny, R*C, R, C, get_index
+
+def fe_solve(mesh, nx, ny, f, boundary, bvals):
+	M = len(nx)
+	A = dok_matrix((M, M))
+	b = zeros((M))
+	for e in mesh:
+		for ((i,j), v) in e.laplacian():
+			if(boundary[i]):
+				continue
+			A[i,j] += v
+	for i in range(M):
+		if(boundary[i]):
+			b[i] = bvals[i]
+			A[i,i] = 1
+		else:
+			b[i] = f(nx[i], ny[i])
+	return spsolve(A, b), A, b
 

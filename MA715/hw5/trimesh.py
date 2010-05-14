@@ -97,19 +97,22 @@ def refine_mesh(pts, mesh, f, fv, grad_fv, qcutoff):
 	M = pts.shape[0]
 	bad_pt = zeros((M))
 	npts = []
-	min_q = 1e10
 	for t in mesh:
 		if(any([ bad_pt[k] for k in t.ni ])):
 			continue
 		if(t.quality() < qcutoff):
-			min_q = min(min_q, t.quality())
-			v = array([ pts[k] for k in t.ni ])
-			v = array([sum(v[:,0]), sum(v[:,1])]) / len(t.ni)
-			if(any([ abs(f(pts[k])) < 1e-8 for k in t.ni ])):
+			#Find smallest edge
+			edges = [ [t.ni[k], t.ni[(k+1)%3]] for k in range(3) ]
+			edge_len = [ norm(pts[e[0]] - pts[e[1]]) for e in edges ]
+			emin = min(zip(edge_len, edges))
+			#collapse edge
+			e = emin[1]
+			bad_pt[e[0]] = 1
+			bad_pt[e[1]] = 1
+			v = .5 * (pts[e[0]] + pts[e[1]])
+			if(any([ abs(f(pts[k])) < 1e-8 for k in e ])):
 				v = push_to_boundary(v, fv, grad_fv)
 			npts.append(v)
-			for k in t.ni:
-				bad_pt[k] = 1
 	npts.extend([ p for (i,p) in enumerate(pts) if not bad_pt[i] ])
 	return array(npts), sum(bad_pt)
 

@@ -25,7 +25,7 @@ def f(x,y):
 	return 1.
 
 #Solve problem
-u = fe_solve(mesh, nx, ny, f, boundary, bvals)
+u, A, b = fe_solve(mesh, nx, ny, f, boundary, bvals)
 
 #Display result
 X = nx.reshape(R, C)

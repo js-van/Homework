@@ -139,19 +139,68 @@ This is a heatmap plot of the resulting distribution:
 
 \paragraph{2}
 
-Since I am using python, I couldn't get the meshgen code to work.  Instead, I downloaded a generic wrapper for QHull and wrote my own mesher based on Delaunay triangulation with a few refinements.  First, the condition that points stay within the set is rewritten as a single unilateral constraint, which can be achieved using R-functions.  From this condition
-
-The starting points for the mesh are taken from a uniform grid, and then jittered a bit.  
+Since I am using python, I couldn't get the meshgen code to work.  Instead, I downloaded a generic wrapper for QHull and wrote my own mesher based on Delaunay triangulation with a few refinements.  First, the condition that points stay within the set is rewritten as a single unilateral constraint, which can be achieved using R-functions.  Similarly, the points near the boundary can be clamped turning this constraint into an optimization problem.  The starting points for the mesh are taken from a uniform grid, and then jittered a bit.  As a post process, any elements with a sufficiently small initial angle are collapsed.  The removal of these bad quality elements is iterated until all elements have an acceptable quality threshold.  Here is the code I wrote:
 
 \lstinputlisting{trimesh.py}
 
 \lstinputlisting{prob2.py}
 
+And here is the resulting mesh:
 \begin{center}
 \includegraphics[width=5in]{prob2_result.png}
 \end{center}
 
+It is not as good as the meshgen results, but given time limitations it is the best I could come up with.
+
 \paragraph{3}
+To set up the weak form of the variational problem, it is sufficient to derive the weak form for the Laplacian operator.  Again, the space of test functions are smooth bumps supported on the domain.  As before, the basis coefficients per element are described a linear system.  Without loss of generality, consider a single element with vertices $(x_1, y_1), (x_2, y_2), (x_3, y_3)$.  Let the basis function for vertex $i$ of this element be given by the following affine function:
+\[ \varphi^i(x, y) = \alpha^i_1 + \alpha^i_2 x + \alpha^i_3 y \]
+Subject to the constraint $\varphi^i(x_j, y_j) = \delta_{i,j}$.  As before, this gives a linear system:
+\begin{eqnarray*}
+\alpha^i_1 + \alpha^i_2 x_1 + \alpha^i_3 y_1 & = & \delta_{i,1} \\
+\alpha^i_1 + \alpha^i_2 x_2 + \alpha^i_3 y_2 & = & \delta_{i,2} \\
+\alpha^i_1 + \alpha^i_2 x_3 + \alpha^i_3 y_3 & = & \delta_{i,3}
+\end{eqnarray*}
+Which we rewrite as a matrix equation, $M \alpha_i = e_i$, and so the coefficients for the $i^{th}$ element are just the $i^{th}$ row of $M^{-1}$.
+
+Now to integrate over the elements, use Barycentric coordinates again.  Define:
+\[ J = \left( \begin{array}{cc}
+x_2 - x_1 & y_2 - y_1 \\
+x_3 - x_1 & y_3 - y_1
+\end{array} \right) \]
+\[ \mathcal{T}(\lambda_1, \lambda_2) = J \left( \begin{array}{c}
+\lambda_1 \\
+\lambda_2 \\
+\end{array} \right) + \left( \begin{array}{c}
+x_1 \\
+y_1 \\
+\end{array} \right) \]
+Though in this case, we must sum over only one triangle.  To determine the x-component of the Laplacian, we do the following:
+\begin{eqnarray*}
+\int \limits_{\Delta} \varphi^i_{x}(x,y) \varphi^j_{x}(x,y) dx dy 
+& = &
+	\frac{1}{\det J} \int \limits_0^1 \int \limits_0^{1-\lambda_2}
+		\varphi^i_{x}(\mathcal{T}(\lambda_1, \lambda_2)) 
+		\varphi^j_{x}(\mathcal{T}(\lambda_1, \lambda_2)) d \lambda_1 d \lambda_2 \\
+& = & 
+	\frac{1}{\det J} \int \limits_{0}^{1} \int \limits_0^{1 - \lambda_2} 
+		\alpha^i_2 \alpha^j_2 d \lambda_1 d \lambda_2 \\
+& = & \frac{\alpha^i_2 \alpha^j_2}{2 \det J}
+\end{eqnarray*}
+And thus the weights for the total Laplacian for element $i$ to $j$ are:
+\[ p_2(\varphi^i, \varphi^j) = \frac{\alpha^i_2 \alpha^j_2 + \alpha^i_3 \alpha^j_3}{2 \det J} \]
+Using this method, I implemented the following modified element type, which reuses my solver from part 1:
+
+\lstinputlisting{solver2.py}
+
+\lstinputlisting{prob3.py}
+
+Here are some results:
+\begin{center}
+\includegraphics[width=5in]{prob3_result.png}
+\end{center}
+
+There appear to be some issues with the set up for the problem.  I would have this working except, I spent too much time trying to get the mesh to draw properly using pylab. I think that given a few more hours I could get this working.
 
 \paragraph{4}
 
