@@ -139,7 +139,9 @@ This is a heatmap plot of the resulting distribution:
 
 \paragraph{2}
 
-Since I am using python, I couldn't get the meshgen code to work.  Instead, I downloaded a generic wrapper for QHull and used basic Delaunay triangulation.  To fit points to the boundary, I used scipy's nonlinear optimizer to enforce the constraint.
+Since I am using python, I couldn't get the meshgen code to work.  Instead, I downloaded a generic wrapper for QHull and wrote my own mesher based on Delaunay triangulation with a few refinements.  First, the condition that points stay within the set is rewritten as a single unilateral constraint, which can be achieved using R-functions.  From this condition
+
+The starting points for the mesh are taken from a uniform grid, and then jittered a bit.  
 
 \lstinputlisting{trimesh.py}
 

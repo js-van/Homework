@@ -10,22 +10,32 @@ from delaunay import Triangulation
 from solver2 import TriElement
 from pylab import *
 
+#Generates a uniform triangular grid
+def gen_tri_grid(xmin, xmax, xstep):
+	g = mgrid[xmin[0]:xmax[0]+xstep[0]:xstep[0],xmin[1]:xmax[1]+xstep[1]:xstep[1]]
+	nx = g[0,:,:].flatten()
+	ny = g[1,:,:].flatten()
+	b0 = matrix([[cos(pi/3.)], [sin(pi/3.)]])
+	b1 = matrix([[1.], [0]])
+	return transpose(array(b0 * nx + b1 * ny))
+	
 #Filters the points to lie within a semianalytic set defined by the function f
 #Points 'near' the boundary but exterior to f are pushed exactly onto the boundary
 #by nonlinear optimization
 def filter_points(pts, f, cutoff, lcutoff=None):
 	if(lcutoff == None):
-		lcutoff = -cutoff
+		lcutoff = 0.
 	pz = zip(map(f, pts), pts)
 	samples = [ x[1] for x in pz if x[0] <= lcutoff ]
 	L = len(samples)
 	for p in [ x[1] for x in pz if (x[0] > lcutoff and x[0] <= cutoff) ]:
-		p0 = array([p[0], p[1], 1.], 'f')
-		v = opt.fmin((lambda x : (x[2] * f(x[:2]))**2 + norm(x[:2] - p)), p0, maxiter=100, maxfun=100)
+		p0 = array([p[0], p[1], 0.], 'f')
+		v = opt.fmin((lambda x : x[2] * f(x[:2]) + norm(x[:2] - p)), p0, maxiter=300, maxfun=300)
 		pp = v[:2]
-		if(abs(f(pp)) <= 0.2 * cutoff):
-			print "adding point"
-			samples.append(pp)
+		print pp - p
+		if(norm(pp) > 2.):
+			continue
+		samples.append(pp)
 	return array(samples), L
 
 #Generates a mesh from a set of base sample points using delaunay triangulation
